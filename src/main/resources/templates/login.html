@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - SMS</title>
+<meta name="_csrf" content="${_csrf.token}" />
+<meta name="_csrf_header" content="${_csrf.headerName}" />
+
+</head>
+
+<body class="gray-bg">
+	<section layout:fragment="content">
+		<div class="middle-box text-center loginscreen animated fadeInDown">
+			<div>
+				<div>
+					<img src="../images/apalya_logo.png  " alt="apalya_logo">
+				</div>
+				<a href="#"><small th:text="${version}"></small></a>
+				<h3>Subscriber Management System</h3>
+				<p>Login, To see it in action.</p>
+				<div th:if="${param.error != null}"
+					class="alert alert-danger alert-dismissable">
+					<button aria-hidden="true" data-dismiss="alert" class="close"
+						type="button"></button>
+					Invalid User / Password.
+				</div>
+				<div th:if="${param.logout != null}"
+					class="alert alert-danger alert-dismissable">
+					<button aria-hidden="true" data-dismiss="alert" class="close"
+						type="button">×</button>
+					You have been logged out.
+				</div>
+				<form id="login_form" th:action="@{/login}" method="post">
+					<div class="form-group">
+						<input type="text" name="username" class="form-control"
+							placeholder="Username" id="user_name" required autofocus>
+					</div>
+					<div class="form-group">
+						<input type="password" name="password" class="form-control"
+							minlength="3" placeholder="Password" id="password" required>
+					</div>
+					
+					<button type="Submit"
+					onclick="newPage()"	class="btn btn-primary block full-width m-b loginButton" id="load">
+						<i id="_loginButtonLoader" class='fa fa-spinner fa-spin'
+							style="display: none;"></i>Login
+					</button>
+
+					<div class="">
+						<small>Copyright © 2018, Apalya Technologies.</small>
+					</div>
+					<div class="text-center">
+						<small>©2007-2018</small>
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+
+	<div layout:fragment="customscripts">
+		<script th:src="@{/scripts/login.js}"></script>
+	</div>
+
+	<script type="text/javascript">
+		$(window).load(function() {
+			// Animate loader off screen
+			$("#pageloader").fadeOut("slow");
+		});
+	</script>
+</body>
+</html>
