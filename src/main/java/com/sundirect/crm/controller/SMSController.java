@@ -28,7 +28,8 @@ public class SMSController {
 	
 	@GetMapping(value="subscriber/info")
 	public String customerInfo(Model model,@RequestParam(value = "query", required = true) Optional<Integer> query, @RequestParam(value="requestType") Optional<String> requestType) {
-		
+		Integer userId=0;
+		if(query.isPresent() || requestType.isPresent()) {
 		String inp="";		
 		if(requestType.get().equalsIgnoreCase("UserID")) {
 			 inp =String.valueOf(query.get());
@@ -36,14 +37,27 @@ public class SMSController {
 			 inp =String.valueOf(query.get());
 		}else if(requestType.get().equalsIgnoreCase("SMC")){
 			 inp =String.valueOf(query.get());
-		}else {
-			return "";
-		}
-		
-		
+		}			
 		MyplexUserUser user=new MyplexUserUser();
+		
 		try {
 		user=subsService.findUserInformation(inp,requestType.get());
+		model.addAttribute(user);
+		userId=user.getId();
+		if(userId!=0) {
+			try {
+				List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
+				deviceList=subsService.findDeviceInfoByUserId(userId);
+				model.addAttribute("Device", deviceList);
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+				log.info("Exception occured in device info: ",e.getMessage());
+				model.addAttribute("message", "No Data available");
+			}
+			}else {
+				model.addAttribute("message", "No Data available");
+			}
 		log.info("UserName: {}",user.getFirst());
 		log.info("SMC: {}",user.getSmc());
 		log.info("Mobile No: {}",user.getMobileNo());
@@ -51,10 +65,14 @@ public class SMSController {
 		catch (Exception e) {
 			// TODO: handle exception
 			log.info("Exception occured: ",e.getMessage());
+			model.addAttribute("message", "Please Enter Valid Input");
 		}
-		model.addAttribute(user);
+		}
+		else {
+			model.addAttribute("message", "");
+			
+		}		
 		return "subscriber";
-		
 	}
 	
 	@GetMapping(value="device")
