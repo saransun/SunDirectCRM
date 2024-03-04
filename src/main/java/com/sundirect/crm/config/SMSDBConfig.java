@@ -37,7 +37,7 @@ public class SMSDBConfig {
 		return DataSourceBuilder.create().build();
 	}
 	@Primary
-	@Bean(name = "entityManagerFactory")
+	@Bean(name = "SMSEntityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean smsEntityManagerFactory(EntityManagerFactoryBuilder builder,
 			@Qualifier("dataSource") DataSource dataSource) {
 		
@@ -52,7 +52,7 @@ public class SMSDBConfig {
 	}
 	@Primary
 	@Bean(name = "transactionManager")
-	public PlatformTransactionManager smsTransactionManager(@Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
+	public PlatformTransactionManager smsTransactionManager(@Qualifier("SMSEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
 		return new JpaTransactionManager(entityManagerFactory);
 	}
 }
