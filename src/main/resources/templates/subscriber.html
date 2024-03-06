@@ -148,9 +148,36 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="background-color: white;">
-        
-        <p>device details go here.</p>
+     <div class="modal-body" style="background-color: white;">
+    <!-- Add your subscription information here -->
+    <div th:if="${user != null}" class="modal-body" >
+    <dt>User ID: <span th:text="${user.id}"> </span></dt> <br></br>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+               
+                <th>Device</th>
+                <th>Model</th>
+                <th>Os</th>
+                <th>Os_version</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="device : ${deviceList}">
+               
+                <td th:text="${device.model}"></td>
+                <td th:text="${device.make}"></td>
+                <td th:text="${device.os}"></td>
+                <td th:text="${device.os_version}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+      <div   class="modal-body" style="background-color: white;">
+      <span style="color: #C0392B; font-weight: bold;" th:text="${message}"> </span>
+       </div>
       </div>
     
     </div>
@@ -169,7 +196,7 @@
       </div>
       <div class="modal-body" style="background-color: white;">
         
-        <p>Other details go here.</p>
+        <p>Other details go here 242408.</p>
       </div>
     
     </div>

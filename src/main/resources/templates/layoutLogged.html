@@ -64,7 +64,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 						class="nav-label">Dashboard</span></a> -->
 				<li
 					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'subscriber') ? 'active':''}"><a
-					th:href="@{|/subscriber/info|}"><img
+					th:href="@{|/sms/subscriber/info|}"><img
 						th:src="@{/images/subscribers_menu.png}" /><span
 						class="nav-label">Subscriber</span></a></li>
 

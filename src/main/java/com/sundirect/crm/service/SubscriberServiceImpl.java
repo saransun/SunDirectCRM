@@ -30,11 +30,13 @@ public class SubscriberServiceImpl implements SubscriberService{
 		try {
 		if(request.equalsIgnoreCase("UserID")) {
 			System.out.print("userinfo-----------");
-			Optional<MyplexUserUser> userinfo=subsInfo.findById(Long.parseLong(id));
+			Optional<MyplexUserUser> userinfo=subsInfo.findById(Integer.parseInt(id));
 			System.out.print("userinfo-----------"+userinfo);
 			return userinfo.get();
 		}else if(request.equalsIgnoreCase("MobileNo")) {
+			System.out.print("MobileNo-----------");
 			Optional<MyplexUserUser> userinfo=subsInfo.findByMobileNo(Long.parseLong(id));
+			System.out.print("MobileNo-----------"+userinfo);
 			return userinfo.get();
 		}else if(request.equalsIgnoreCase("SMC")){
 			Optional<MyplexUserUser> userinfo=subsInfo.findBySmc(id);
