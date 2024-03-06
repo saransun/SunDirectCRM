@@ -1,6 +1,9 @@
 package com.sundirect.crm.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +16,9 @@ import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
 import com.sundirect.crm.apirepo.DeviceRepo;
 import com.sundirect.crm.apirepo.SubscriberRepo;
+import com.sundirect.crm.smsentity.Subscription;
+import com.sundirect.crm.smsrepo.SubscriptionRepo;
+
 @Component
 @Transactional
 public class SubscriberServiceImpl implements SubscriberService{
@@ -22,6 +28,10 @@ public class SubscriberServiceImpl implements SubscriberService{
 	
 	@Autowired
 	DeviceRepo deviceInfo;
+	
+	@Autowired
+	SubscriptionRepo subscription;
+	
 	
 	@Override
 	public MyplexUserUser findUserInformation(String id,String request) {
@@ -57,6 +67,24 @@ public class SubscriberServiceImpl implements SubscriberService{
 		deviceList=deviceInfo.findByUserId(userId);
 		
 		return deviceList;
+	}
+
+	
+	@Override
+	public List<Subscription> findSubscriptionByuserId(Integer userId) {
+		        
+        Date date=new Date();
+        
+        List<Subscription> sub=subscription.findByUserIdAndValidTillGreaterThan(userId, date);		
+       // List<Subscription> sub=subscription.findByUserId(userId);
+		return sub;
+	}
+
+	@Override
+	public List<Subscription> findExpiredSubscriptionByuserId(Integer userId) {
+		 Date date=new Date();	        
+	     List<Subscription> sub=subscription.findByUserIdAndValidTillLessThan(userId, date);
+		 return sub;
 	}
 
 	

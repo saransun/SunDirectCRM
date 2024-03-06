@@ -2,12 +2,12 @@ package com.sundirect.crm.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
 import com.sundirect.crm.service.SubscriberService;
+import com.sundirect.crm.smsentity.Subscription;
 
-@Controller
-//@RequestMapping(value = "/sms/")
+@RestController
+@RequestMapping(value = "/sms/")
 public class SMSController {
 	private static final Logger log = LoggerFactory.getLogger(SMSController.class);
 	
@@ -27,60 +28,93 @@ public class SMSController {
 	SubscriberService subsService;
 	
 	
-	@GetMapping(value = "/sms/subscriber/info")
-	public String customerInfo(Model model, @RequestParam(value = "query", required = true) Optional<String> query,
-			@RequestParam(value = "requestType") Optional<String> requestType) {
-		Integer userId = 0;
-		if (query.isPresent() && requestType.isPresent() && !query.get().isEmpty()) {
-			String inp = "";
-			if (requestType.get().equalsIgnoreCase("UserID")) {
-				inp = String.valueOf(query.get());
-			} else if (requestType.get().equalsIgnoreCase("MobileNo")) {
-				inp = String.valueOf(query.get());
-			} else if (requestType.get().equalsIgnoreCase("SMC")) {
-				inp = String.valueOf(query.get());
-			}
-			MyplexUserUser user = new MyplexUserUser();
-
+	@GetMapping(value="subscriber/info")
+	public String customerInfo(Model model,@RequestParam(value = "query", required = true) Optional<Integer> query, @RequestParam(value="requestType") Optional<String> requestType) {
+		Integer userId=0;
+		if(query.isPresent() || requestType.isPresent()) {
+		String inp="";		
+		if(requestType.get().equalsIgnoreCase("UserID")) {
+			 inp =String.valueOf(query.get());
+		}else if(requestType.get().equalsIgnoreCase("MobileNo")) {
+			 inp =String.valueOf(query.get());
+		}else if(requestType.get().equalsIgnoreCase("SMC")){
+			 inp =String.valueOf(query.get());
+		}			
+		MyplexUserUser user=new MyplexUserUser();
+		
+		try {
+		log.info("test1");
+		user=subsService.findUserInformation(inp,requestType.get());		
+		model.addAttribute(user);
+		log.info("test2");
+		userId=user.getId();
+		if(userId!=0) {
 			try {
-				user = subsService.findUserInformation(inp, requestType.get());
-
-				model.addAttribute(user);
-				userId = user.getId();
-				if (userId != 0) {
-					try {
-						List<MyplexUserDevice> deviceList = new ArrayList<MyplexUserDevice>();
-						deviceList = subsService.findDeviceInfoByUserId(userId);
-
-						model.addAttribute("deviceList", deviceList);
-
-					} catch (Exception e) {
-						// TODO: handle exception
-						log.info("Exception occured in device info: ", e.getMessage());
-						model.addAttribute("message", "No Data available");
-					}
-				} else {
-					model.addAttribute("message", "No Data available");
-				}
-				log.info("UserName: {}", user.getFirst());
-				log.info("SMC: {}", user.getSmc());
-				log.info("Mobile No: {}", user.getMobileNo());
-			} catch (Exception e) {
-				// TODO: handle exception
-				log.info("Exception occured: ", e.getMessage());
-				model.addAttribute("message", "Please Enter Valid Input");
+				log.info("Entering in Device Details........");
+				List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
+				deviceList=subsService.findDeviceInfoByUserId(userId);
+				model.addAttribute("Device", deviceList);
 			}
-			model.addAttribute("user", user);
-			model.addAttribute("filter", requestType.get());
-			model.addAttribute("query", String.valueOf(query.get()));
-
-		} else {
-			model.addAttribute("message", "");
-
+			catch (Exception e) {
+				// TODO: handle exception
+				log.info("Exception occured in device info: ",e.getMessage());
+				model.addAttribute("message", "No Data available");
+			}
+			
+			try {
+				log.info("Entering in Subscription Details........");
+				List<Subscription> subscriptionList=new ArrayList<Subscription>();
+				subscriptionList=subsService.findSubscriptionByuserId(userId);
+				if(subscriptionList.isEmpty()) {
+					log.info("No Active subscription........");
+					model.addAttribute("message1", "No Active subscription available");
+				}
+				for(Subscription s:subscriptionList) {
+					log.info("Active plan information: {}",s.getPlan().getName());
+				}
+				model.addAttribute("Active",subscriptionList);	
+				subscriptionList.clear();
+				subscriptionList=subsService.findExpiredSubscriptionByuserId(userId);				
+				if(subscriptionList.isEmpty()) {
+					log.info("No expired subscription........");
+					model.addAttribute("message1", "No Expired subscription available");
+				}
+				for(Subscription s:subscriptionList) {
+					log.info("Expired plan information: {}",s.getPlan().getName());
+				}
+				model.addAttribute("Expired",subscriptionList);
+			}catch(Exception e) {
+				log.info("Exception occured in device info: ",e.getMessage());
+				model.addAttribute("message", "No subscription available");
+			}
+			
+		
+		
+		}else {
+				model.addAttribute("message", "No Data available");
+			}
+		log.info("UserName: {}",user.getFirst());
+		log.info("SMC: {}",user.getSmc());
+		log.info("Mobile No: {}",user.getMobileNo());
 		}
+        catch (NoSuchElementException e) {
+        	log.info("User not found: {}",e.getMessage());
+        	model.addAttribute("message", "User not found");
+        }
+		catch (Exception e) {
+			// TODO: handle exception
+			log.info("Exception occured: {}",e.getMessage());
+			e.printStackTrace();
+			model.addAttribute("message", "Please Enter Valid Input");
+		}
+		}
+		else {
+			model.addAttribute("message", "");
+			
+		}		
 		return "subscriber";
 	}
-
+	
 	@GetMapping(value="device")
 	public String getCustomerDevice(Model model, @RequestParam(value="userId",required = true) Integer userId) {
 		
