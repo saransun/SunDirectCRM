@@ -5,6 +5,7 @@ import java.util.List;
 import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
 import com.sundirect.crm.apientity.PlayerEventsPlayerevent;
+import com.sundirect.crm.smsentity.Asset;
 import com.sundirect.crm.smsentity.Subscription;
 
 public interface SubscriberService {
@@ -20,5 +21,7 @@ public interface SubscriberService {
 	List<PlayerEventsPlayerevent> findPlayerevents(Integer userId);
 	
 	List<MyplexUserUser> findUserList(String id,String request);
+	
+	Asset findByAsset(Integer id);
 	
 }

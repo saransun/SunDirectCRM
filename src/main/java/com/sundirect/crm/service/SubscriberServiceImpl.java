@@ -19,7 +19,9 @@ import com.sundirect.crm.apientity.PlayerEventsPlayerevent;
 import com.sundirect.crm.apirepo.DeviceRepo;
 import com.sundirect.crm.apirepo.PlayerEventRepo;
 import com.sundirect.crm.apirepo.SubscriberRepo;
+import com.sundirect.crm.smsentity.Asset;
 import com.sundirect.crm.smsentity.Subscription;
+import com.sundirect.crm.smsrepo.AssetRepo;
 import com.sundirect.crm.smsrepo.SubscriptionRepo;
 
 @Component
@@ -38,7 +40,8 @@ public class SubscriberServiceImpl implements SubscriberService{
 	@Autowired
 	PlayerEventRepo playerEvent;
 	
-	
+	@Autowired
+	AssetRepo assetRepo;
 	
 	/*
 	 * @Override public MyplexUserUser findUserInformation(String id,String request)
@@ -114,6 +117,11 @@ public class SubscriberServiceImpl implements SubscriberService{
 		 Date sevenDayBefore=cal.getTime();
 		
 		return playerEvent.findByUserIdAndCreatedAtGreaterThan(userId, sevenDayBefore);
+	}
+	
+	@Override
+	public Asset findByAsset(Integer id) {
+		return assetRepo.findById(id).get();
 	}
 
 	
