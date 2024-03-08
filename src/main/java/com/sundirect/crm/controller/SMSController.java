@@ -2,6 +2,7 @@ package com.sundirect.crm.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
+import com.sundirect.crm.apientity.PlayerEventsPlayerevent;
 import com.sundirect.crm.service.SubscriberService;
 import com.sundirect.crm.smsentity.Subscription;
 
@@ -41,64 +43,20 @@ public class SMSController {
 			 inp =String.valueOf(query.get());
 		}else if(requestType.get().equalsIgnoreCase("SMC")){
 			 inp =String.valueOf(query.get());
-		}			
-		MyplexUserUser user=new MyplexUserUser();
-		
+		}		
 		try {
-		log.info("test1");
-		user=subsService.findUserInformation(inp,requestType.get());		
-		model.addAttribute(user);
-		log.info("test2");
-		userId=user.getId();
-		if(userId!=0) {
-			try {
-				log.info("Entering in Device Details........");
-				List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
-				deviceList=subsService.findDeviceInfoByUserId(userId);
-				model.addAttribute("deviceList", deviceList);
-			}
-			catch (Exception e) {
-				// TODO: handle exception
-				log.info("Exception occured in device info: ",e.getMessage());
-				model.addAttribute("message", "No Data available");
-			}
 			
-			try {
-				log.info("Entering in Subscription Details........");
-				List<Subscription> activeSubscriptionList=new ArrayList<Subscription>();
-				List<Subscription> expiredSubscriptionList=new ArrayList<Subscription>();
-				activeSubscriptionList=subsService.findSubscriptionByuserId(userId);
-				if(activeSubscriptionList.isEmpty()) {
-					log.info("No Active subscription........");
-					model.addAttribute("message1", "No Active subscription available");
-				}
-				for(Subscription s:activeSubscriptionList) {
-					log.info("Active plan information: {}",s.getPlan().getName());
-				}
-				model.addAttribute("Active",activeSubscriptionList);	
-				expiredSubscriptionList=subsService.findExpiredSubscriptionByuserId(userId);				
-				if(expiredSubscriptionList.isEmpty()) {
-					log.info("No expired subscription........");
-					model.addAttribute("message1", "No Expired subscription available");
-				}
-				for(Subscription s:expiredSubscriptionList) {
-					log.info("Expired plan information: {}",s.getPlan().getName());
-				}
-				model.addAttribute("Expired",expiredSubscriptionList);
-			}catch(Exception e) {
-				log.info("Exception occured in device info: ",e.getMessage());
-				model.addAttribute("message", "No subscription available");
-			}
+			//MyplexUserUser user=new MyplexUserUser();
 			
-		
-		
-		}else {
-				model.addAttribute("message", "No Data available");
-			}
-		log.info("UserName: {}",user.getFirst());
-		log.info("SMC: {}",user.getSmc());
-		log.info("Mobile No: {}",user.getMobileNo());
-		model.addAttribute("user", user);
+			List<MyplexUserUser> userList= new ArrayList<MyplexUserUser>();
+			userList=subsService.findUserList(inp, requestType.get());		
+			//model.addAttribute("userList",userList);
+			//userId=user.getId();
+				/*
+				 * log.info("UserName: {}",user.getFirst()); log.info("SMC: {}",user.getSmc());
+				 * log.info("Mobile No: {}",user.getMobileNo());
+				 */
+		model.addAttribute("user", userList);
 		model.addAttribute("query", String.valueOf(query.get()));
 		model.addAttribute("filter",requestType.get());
 		}
@@ -122,22 +80,95 @@ public class SMSController {
 	}
 	
 	@GetMapping(value="device")
-	public String getCustomerDevice(Model model, @RequestParam(value="userId",required = true) Integer userId) {
+	public String getCustomerDevice(Model model, @RequestParam(value="userId",required = true) Integer userId) {		
+		/*
+		 * List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
+		 * deviceList=subsService.findDeviceInfoByUserId(userId);
+		 * model.addAttribute("Device", deviceList); int inc=0;
+		 */
 		
-		List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
-		deviceList=subsService.findDeviceInfoByUserId(userId);		
-		model.addAttribute("Device", deviceList);		
-		int inc=0;
-		for(MyplexUserDevice my:deviceList) {
-			inc++;
-			log.info("{} -  Device",inc);
-			log.info("Os: {}",my.getOs());
-			log.info("Os version: {}",my.getOs_version());
-			log.info("Device make: {}",my.getMake());
-			log.info("Model: {}",my.getModel());
+		
+		try {
+			log.info("Entering in Device Details........");
+			List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
+			deviceList=subsService.findDeviceInfoByUserId(userId);
+			model.addAttribute("deviceList", deviceList);
+			int inc=0;
+			for(MyplexUserDevice my:deviceList) {
+				inc++;
+				log.info("{} -  Device",inc);
+				log.info("Os: {}",my.getOs());
+				log.info("Os version: {}",my.getOs_version());
+				log.info("Device make: {}",my.getMake());
+				log.info("Model: {}",my.getModel());
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			log.info("Exception occured in device info: ",e.getMessage());
+			model.addAttribute("message", "No Data available");
 		}
 		
 		return "device";
 	}
+	
+	@GetMapping(value="subscriptionInfo")
+	public String getCustomerSubscription(Model model, @RequestParam(value="userId",required = true) Integer userId) {
+		
+		try {
+			log.info("Entering in Subscription Details........");
+			List<Subscription> activeSubscriptionList=new ArrayList<Subscription>();
+			List<Subscription> expiredSubscriptionList=new ArrayList<Subscription>();
+			activeSubscriptionList=subsService.findSubscriptionByuserId(userId);
+			if(activeSubscriptionList.isEmpty()) {
+				log.info("No Active subscription........");
+				model.addAttribute("message1", "No Active subscription available");
+			}
+			for(Subscription s:activeSubscriptionList) {
+				log.info("Active plan information: {}",s.getPlan().getName());
+			}
+			model.addAttribute("Active",activeSubscriptionList);	
+			expiredSubscriptionList=subsService.findExpiredSubscriptionByuserId(userId);				
+			if(expiredSubscriptionList.isEmpty()) {
+				log.info("No expired subscription........");
+				model.addAttribute("message1", "No Expired subscription available");
+			}
+			for(Subscription s:expiredSubscriptionList) {
+				log.info("Expired plan information: {}",s.getPlan().getName());
+			}
+			model.addAttribute("Expired",expiredSubscriptionList);
+		}catch(Exception e) {
+			log.info("Exception occured in device info: ",e.getMessage());
+			model.addAttribute("message", "No subscription available");
+		}
+				
+		return "subscription";	
+	}
+	
+	
+	@GetMapping(value="otherInfo")
+	public String getCustomerOtherInfo(Model model, @RequestParam(value="userId",required = true) Integer userId) {
+		
+		try {		
+		List<PlayerEventsPlayerevent> eventList=subsService.findPlayerevents(userId);
+		model.addAttribute("",eventList);
+		
+		for(PlayerEventsPlayerevent p:eventList) {
+			log.info("Last 7 days Event List");
+			log.info("");
+		}
+		
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			log.info("Exception occured in device info: ",e.getMessage());
+			model.addAttribute("message", "No Player Event available");
+		}
+		
+		
+		return "otherInfo";
+	}
+		
+	
 
 }
