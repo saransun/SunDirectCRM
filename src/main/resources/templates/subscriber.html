@@ -68,43 +68,33 @@
                             </form>
                         </div>
 
-    <div th:if="${user != null}" id="userDetails">
+    <div th:if="${user != null}" id="userDetails" >
     <h2 style="color: #6495ED; font-weight: bold; text-decoration: underline;">User Details:</h2>
-
-
-
+  <div th:each="user : ${user}">
     <dl class="user-details-list">
         <div class="row">
             <div class="col-lg-3">
-                <dt>User ID: <span th:text="${user.id}"> </span></dt> <br></br>
-                
-
-               <dt>Name: <span th:text="${user.first + ' ' + user.last}"> </span></dt> <br></br>
-                
-
-                <dt>Mobile No: <span th:text="${user.mobileNo}"> </span></dt>
-                
+                <dt id="userId">User ID: <span th:text="${user.id}"></span></dt> <br />
+                <dt>Name: <span th:text="${user.first + ' ' + user.last}"></span></dt> <br />
+                <dt>Mobile No: <span th:text="${user.mobileNo}"></span></dt>
             </div>
 
             <div class="col-lg-3">
-                <dt>SMC: <span th:text="${user.smc}"> </span></dt><br></br>
-                
-
-                <dt>Email: <span th:text="${user.email_id}"> </span></dt><br></br>
-                
-
-                <dt>Address: <span > </span></dt>
-               
+                <dt>SMC: <span th:text="${user.smc}"></span></dt><br />
+                <dt>Email: <span th:text="${user.email_id}"></span></dt><br />
+                <dt>Address: <span></span></dt>
             </div>
         </div>
-    </dl> <br></br>
+    </dl>
+    <br />
     <div>
-<button class="btn btn-info" data-toggle="modal" data-target="#subscription" id="subscriptionButton" type="button">Subscription Info</button>
-
-<button class="btn btn-primary" data-toggle="modal" data-target="#device" id="DeviceButton" type="submit" >Device Info</button>
-<button class="btn btn-warning" data-toggle="modal" data-target="#other"  id="OtherButton" >Other</button>
-
+      
+       <button class="btn btn-info" data-toggle="modal" th:attr="data-target='#subscription', data-userid=${user.id}" onclick="subscriptionInfo(this.getAttribute('data-userid'))" type="button">Subscription Info</button>
+        <button class="btn btn-info" data-toggle="modal" th:attr="data-target='#device', data-userid=${user.id}" onclick="deviceInfo(this.getAttribute('data-userid'))" type="button">Device Info</button>
+        <button class="btn btn-info" data-toggle="modal" th:attr="data-target='#other', data-userid=${user.id}" onclick="otherInfo(this.getAttribute('data-userid'))" type="button">Other Info</button>
+    </di>
 </div>
+
 </div>
 
 <div >
@@ -118,75 +108,50 @@
 
     </div>
 
+<div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width:800px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="subscriptionLabel">Subscription Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-<!--  sub Modal -->
-<div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true" >
-  <div class="modal-dialog" role="document">
-    <div class="modal-content" style="width:800px;">
-      <div class="modal-header">
-        <h5 class="modal-title" id="subscriptionLabel">Subscription Info</h5>
-         <div th:if="${user != null}" id="userDetail">
-     <dt>User ID: <span th:text="${user.id}"> </span></dt> 
-      </div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div> 
-     
-        <div class="modal-body" style="background-color: white;">
-    <!--   <div th:if="${user != null}" class="modal-body" >
-        
-        <dt>User ID: <span th:text="${user.id}"> </span></dt> <br></br>
-      </div>  -->
-       <dt style="color: green;">Active Plan </dt>
-       <table class="table">
-        <thead>
-            <tr>
-               
-                <th>S.no</th>
-                <th>Sms_Plan_Id</th>
-                <th>Plan</th>
-                <th>Start_From</th>
-                <th>Valid_Till</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr  th:each="active : ${Active}">
-                <td></td>
-                <td th:text="${active.plan.id}"></td>
-                <td th:text="${active.plan.name}"></td>
-                <td th:text="${active.validFrom}"></td>
-                <td th:text="${active.validTill}"></td>
-                
-            </tr>
-        </tbody>
-    </table>
-    <dt style="color:red;">Expired Plan</dt>
-       <table class="table">
-        <thead>
-            <tr>
-               
-                <th>S.no</th>
-                <th>Sms_Plan_Id</th>
-                <th>Plan</th>
-                <th>Start_From</th>
-                <th>Valid_Till</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr  th:each="expired : ${Expired}">
-                <td></td>
-                <td th:text="${expired.plan.id}"></td>
-                <td th:text="${expired.plan.name}"></td>
-                <td th:text="${expired.validFrom}"></td>
-                <td th:text="${expired.validTill}"></td>
-                
-            </tr>
-        </tbody>
-    </table>
-     </div>
+            <div class="modal-body" style="background-color: white;">
+                <!-- Your HTML table structure -->
+                <dt style="color: green;">Active Plan </dt>
+<table id="activePlanTable" class="table">
+    <thead>
+        <tr>
+            <th>S.no</th>
+            <th>Sms_Plan_Id</th>
+            <th>Plan</th>
+            <th>Start_From</th>
+            <th>Valid_Till</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Repeat the structure for the expired plan table if you haven't already -->
+<dt style="color:red;">Expired Plan</dt>
+<table id="expiredPlanTable" class="table">
+    <thead>
+        <tr>
+            <th>S.no</th>
+            <th>Sms_Plan_Id</th>
+            <th>Plan</th>
+            <th>Start_From</th>
+            <th>Valid_Till</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <!--  device Modal -->
@@ -195,8 +160,7 @@
     <div class="modal-content" >
       <div class="modal-header">
         <h5 class="modal-title" id="deviceLabel">Device Info</h5>
-         <div th:if="${user != null}" id="userDetail">
-     <dt>User ID: <span th:text="${user.id}"> </span></dt>       </div>
+         
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -204,7 +168,7 @@
      <div class="modal-body" style="background-color: white;">
     <!-- Add your subscription information here -->
     
-    <table class="table">
+    <table class="table" id="deviceTable">
         <thead>
             <tr>
                
@@ -215,13 +179,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="device : ${deviceList}">
-               
-                <td th:text="${device.model}"></td>
-                <td th:text="${device.make}"></td>
-                <td th:text="${device.os}"></td>
-                <td th:text="${device.os_version}"></td>
-            </tr>
+           
         </tbody>
     </table>
 </div>
@@ -233,12 +191,12 @@
     
     </div>
   </div>
-</div>
-
-<!--  Other Modal -->
+  
+  
+  <!--  Other Modal -->
 <div class="modal fade" id="other" tabindex="-1" role="dialog" aria-labelledby="otherLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content" >
+    <div class="modal-content" style="width:800px;">
       <div class="modal-header">
         <h5 class="modal-title" id="otherLabel">Other Info</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -246,18 +204,251 @@
         </button>
       </div>
       <div class="modal-body" style="background-color: white;">
-        
-        <p>Other details go here 242408.</p>
+        <table class="table" id="otherTable">
+        <thead>
+            <tr>
+               
+                <th>ContentId</th>
+                <th>ContentName</th>
+                <th>ContentType</th>
+                <th>Studio</th>
+                <th>Action</th>
+                <th>createdAt</th>
+                <th>ModifiedAt</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+           
+        </tbody>
+    </table>
       </div>
     
     </div>
   </div>
 </div>
+</div>
+
+<script>
+
+async function subscriptionInfo(userId) {
+    var url = '/subscriptionInfo?userId=' + userId;
+    var modal = document.getElementById('subscription'); // Get the modal element
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        // Update the modal content with the retrieved data
+        
+        updateModalContent(data);
+        
+        // Show the modal
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function updateModalContent(data) {
+    // Update Active Plan table
+    var activePlanTable = document.getElementById('activePlanTable');
+    updateTable(activePlanTable, data.Active);
+
+    // Update Expired Plan table
+    var expiredPlanTable = document.getElementById('expiredPlanTable');
+    updateTable(expiredPlanTable, data.Expired);
+    activePlanTable=null;
+    expiredPlanTable=null;
+}
+
+function updateTable(table, planData) {
+    // Clear existing rows
+    table.getElementsByTagName('tbody')[0].innerHTML = '';
+
+    // Update the table with new data
+    planData.forEach(function (plan, index) {
+    	if(plan.message=="success"){
+        var row = table.getElementsByTagName('tbody')[0].insertRow();
+        var validFrom = plan.sub.validFrom;
+
+     // Create a Date object using the timestamp
+     var from = new Date(validFrom);
+     var validTill = plan.sub.validTill;
+
+     // Create a Date object using the timestamp
+     var to = new Date(validTill);
+
+   //  console.log(dateObject);
+        var cell = row.insertCell(0);
+        cell.textContent = index + 1;
+        cell = row.insertCell(1);
+        cell.textContent = plan.sub.plan.id;
+        cell = row.insertCell(2);
+        cell.textContent = plan.sub.plan.name;
+        cell = row.insertCell(3);
+        cell.textContent = from ;
+        cell = row.insertCell(4);
+        cell.textContent = to;
+    	}else{
+    		var cell = row.insertCell(0);
+            cell.textContent ="no data";
+    	} });
+    
+}
+
+</script>
+<script>
+
+async function deviceInfo(userId) {
+    var url = '/deviceInfo?userId=' + userId;
+    var modal = document.getElementById('device'); // Get the modal element
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        // Update the modal content with the retrieved data
+       updateDeviceInfo(data);
+
+        // Show the modal
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function updateDeviceInfo(data) {
+    // Update Active Plan table
+    var activePlanTable = document.getElementById('deviceTable');
+    updateDeviceTable(activePlanTable, data.deviceList);
+
+    // Update Expired Plan table
+    
+    
+    
+}
+function updateDeviceTable(table, planData) {
+    // Clear existing rows
+    table.getElementsByTagName('tbody')[0].innerHTML = '';
+
+    // Update the table with new data
+    planData.forEach(function (plan, index) {
+        var row = table.getElementsByTagName('tbody')[0].insertRow();
+        
+
+   //  console.log(dateObject);
+        var cell = row.insertCell(0);
+        cell.textContent = plan.device.make;
+        cell = row.insertCell(1);
+        cell.textContent =plan.device.model;
+        cell = row.insertCell(2);
+        cell.textContent =plan.device.os ;
+        cell = row.insertCell(3);
+        cell.textContent =plan.device.os_version ;
+        
+        
+    });
+}
+
+</script>
+
+<script>
+
+async function otherInfo(userId) {
+    var url = '/otherInfo?userId=' + userId;
+    var modal = document.getElementById('other'); // Get the modal element
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        // Update the modal content with the retrieved data
+       updateOtherInfo(data);
+
+        // Show the modal
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function updateOtherInfo(data) {
+    // Update Active Plan table
+    var activePlanTable = document.getElementById('otherTable');
+    updateOtherTable(activePlanTable, data.otherInfo);
+
+    // Update Expired Plan table
+    
+    
+    
+}
+function updateOtherTable(table, planData) {
+    // Clear existing rows
+    table.getElementsByTagName('tbody')[0].innerHTML = '';
+
+    // Update the table with new data
+    planData.forEach(function (plan, index) {
+        var row = table.getElementsByTagName('tbody')[0].insertRow();
+        
+        var create = plan.play.createdAt;
+
+        // Create a Date object using the timestamp
+        var from = new Date(create);
+        var modified = plan.play.modifiedAt;
+
+        // Create a Date object using the timestamp
+        var to = new Date(modified);
+   //  console.log(dateObject);
+        var cell = row.insertCell(0);
+        cell.textContent = plan.asset.id;
+      //  console.log(  cell.textContent);
+        cell = row.insertCell(1);
+        cell.textContent =plan.asset.name;
+        cell = row.insertCell(2);
+        cell.textContent =plan.asset.type ;
+        cell = row.insertCell(3);
+        cell.textContent =plan.asset.studioName ;
+        cell = row.insertCell(4);
+        cell.textContent =plan.play.action ;
+        cell = row.insertCell(5);
+        cell.textContent =from ;
+        cell = row.insertCell(6);
+        cell.textContent =to ;
+        
+        
+    });
+}
+
+</script>
+
 </section>
 
 <div layout:fragment="customscripts">
     <script th:src="@{/scripts/subscriber.js}"></script>
     <script th:src="@{/scripts/search.js}"></script>
+     
    
 </div>
 
