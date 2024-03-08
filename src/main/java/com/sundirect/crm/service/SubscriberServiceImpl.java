@@ -3,6 +3,7 @@ package com.sundirect.crm.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
+import com.sundirect.crm.apientity.PlayerEventsPlayerevent;
 import com.sundirect.crm.apirepo.DeviceRepo;
+import com.sundirect.crm.apirepo.PlayerEventRepo;
 import com.sundirect.crm.apirepo.SubscriberRepo;
 import com.sundirect.crm.smsentity.Subscription;
 import com.sundirect.crm.smsrepo.SubscriptionRepo;
@@ -32,28 +35,43 @@ public class SubscriberServiceImpl implements SubscriberService{
 	@Autowired
 	SubscriptionRepo subscription;
 	
+	@Autowired
+	PlayerEventRepo playerEvent;
+	
+	
+	
+	/*
+	 * @Override public MyplexUserUser findUserInformation(String id,String request)
+	 * { try { if(request.equalsIgnoreCase("UserID")) {
+	 * //System.out.print("userinfo-----------"); Optional<MyplexUserUser>
+	 * userinfo=subsInfo.findById(Integer.parseInt(id));
+	 * //System.out.print("userinfo-----------"+userinfo); return userinfo.get();
+	 * }else if(request.equalsIgnoreCase("MobileNo")) {
+	 * //System.out.print("MobileNo-----------"); Optional<MyplexUserUser>
+	 * userinfo=subsInfo.findByMobileNo(Long.parseLong(id));
+	 * //System.out.print("MobileNo-----------"+userinfo); return userinfo.get();
+	 * }else if(request.equalsIgnoreCase("SMC")){ Optional<MyplexUserUser>
+	 * userinfo=subsInfo.findBySmc(id); return userinfo.get(); } }catch (Exception
+	 * e) { //System.out.print(e.toString()); } //Optional<MyplexUserUser>
+	 * userinfo=subsInfo.findById(ids); return null; }
+	 */
 	
 	@Override
-	public MyplexUserUser findUserInformation(String id,String request) {
-		// TODO Auto-generated method stub
-		//Integer ids=Integer.parseInt(id);
+	public List<MyplexUserUser> findUserList(String id,String request) {
 		try {
+			List<MyplexUserUser> userDetail=new ArrayList<MyplexUserUser>();
 		if(request.equalsIgnoreCase("UserID")) {
-			System.out.print("userinfo-----------");
-			Optional<MyplexUserUser> userinfo=subsInfo.findById(Integer.parseInt(id));
-			System.out.print("userinfo-----------"+userinfo);
-			return userinfo.get();
+			userDetail.add(subsInfo.findById(Integer.parseInt(id)).get());
+			return userDetail;
 		}else if(request.equalsIgnoreCase("MobileNo")) {
-			System.out.print("MobileNo-----------");
-			Optional<MyplexUserUser> userinfo=subsInfo.findByMobileNo(Long.parseLong(id));
-			System.out.print("MobileNo-----------"+userinfo);
-			return userinfo.get();
+			userDetail=subsInfo.findByMobileNo(Long.parseLong(id)).get();
+			return userDetail;
 		}else if(request.equalsIgnoreCase("SMC")){
-			Optional<MyplexUserUser> userinfo=subsInfo.findBySmc(id);
-			return userinfo.get();
+			userDetail=subsInfo.findBySmc(id).get();
+			return userDetail;
 		}
 		}catch (Exception e) {
-			System.out.print(e.toString());
+			//System.out.print(e.toString());
 		}
 		//Optional<MyplexUserUser> userinfo=subsInfo.findById(ids);		
 		return null;
@@ -61,7 +79,7 @@ public class SubscriberServiceImpl implements SubscriberService{
 
 	@Override
 	public List<MyplexUserDevice> findDeviceInfoByUserId(Integer userId) {
-		// TODO Auto-generated method stub
+		
 		List<MyplexUserDevice> deviceList=new ArrayList<MyplexUserDevice>();
 		
 		deviceList=deviceInfo.findByUserId(userId);
@@ -85,6 +103,17 @@ public class SubscriberServiceImpl implements SubscriberService{
 		 Date date=new Date();	        
 	     List<Subscription> sub=subscription.findByUserIdAndValidTillLessThan(userId, date);
 		 return sub;
+	}
+
+	@Override
+	public List<PlayerEventsPlayerevent> findPlayerevents(Integer userId) {
+		Date currentDate=new Date();
+		 Calendar cal=Calendar.getInstance();
+		 cal.setTime(currentDate);
+		 cal.add(Calendar.DAY_OF_YEAR, -7);
+		 Date sevenDayBefore=cal.getTime();
+		
+		return playerEvent.findByUserIdAndCreatedAtGreaterThan(userId, sevenDayBefore);
 	}
 
 	
