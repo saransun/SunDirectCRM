@@ -65,6 +65,8 @@ public class SMSController {
 				model.addAttribute("message", "Please Enter Valid Input");
 			}
 		} else {
+			model.addAttribute("query", String.valueOf(query.get()));
+			model.addAttribute("filter", requestType.get());
 			model.addAttribute("message", "Please Enter Valid Input");
 		}
 		return "subscriber";
@@ -80,6 +82,13 @@ public class SMSController {
 			List<MapObject> mapList = new ArrayList<MapObject>();
 			deviceList = subsService.findDeviceInfoByUserId(userId);
 			model.addAttribute("deviceList", deviceList);
+			if (deviceList.isEmpty()) {
+				MapObject mapObject = new MapObject();
+				mapObject.setMessage1("No Data available");
+				mapList.add(mapObject);
+				modelmap.put("deviceList", mapList);
+				return modelmap;
+			}
 			int inc = 0;
 			for (MyplexUserDevice my : deviceList) {
 				inc++;
@@ -177,11 +186,18 @@ public class SMSController {
 		try {
 			List<PlayerEventsPlayerevent> eventList = subsService.findPlayerevents(userId);
 			List<MapObject> mapList = new ArrayList<MapObject>();
-			model.addAttribute("", eventList);			
+			model.addAttribute("", eventList);
+			if (eventList.isEmpty()) {
+				MapObject mapObject = new MapObject();
+				mapObject.setMessage1("No Data available");
+				mapList.add(mapObject);
+				modelmap.put("otherInfo", mapList);
+				return modelmap;
+			}
 			for (PlayerEventsPlayerevent p : eventList) {
 				MapObject mapObject = new MapObject();
 				log.info("Last 7 days Event List");
-				Asset asset=subsService.findByAsset(Integer.parseInt(p.getContentId()));
+				Asset asset = subsService.findByAsset(Integer.parseInt(p.getContentId()));
 				mapObject.setAsset(asset);
 				mapObject.setMessage("success");
 				log.info("Action: {}", p.getAction());
