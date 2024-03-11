@@ -65,7 +65,7 @@ public class SMSController {
 				model.addAttribute("message", "Please Enter Valid Input");
 			}
 		} else {
-			model.addAttribute("message", "");
+			model.addAttribute("message", "Please Enter Valid Input");
 		}
 		return "subscriber";
 	}
