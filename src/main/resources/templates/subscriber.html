@@ -87,13 +87,23 @@
         </div>
     </dl>
     <br />
-    <div>
-      
-       <button class="btn btn-info" data-toggle="modal" th:attr="data-target='#subscription', data-userid=${user.id}" onclick="subscriptionInfo(this.getAttribute('data-userid'))" type="button">Subscription Info</button>
-        <button class="btn btn-info" data-toggle="modal" th:attr="data-target='#device', data-userid=${user.id}" onclick="deviceInfo(this.getAttribute('data-userid'))" type="button">Device Info</button>
-        <button class="btn btn-info" data-toggle="modal" th:attr="data-target='#other', data-userid=${user.id}" onclick="otherInfo(this.getAttribute('data-userid'))" type="button">Other Info</button>
-    </di>
+    <div style="display: flex; margin-bottom: 10px;">      
+       <button style = " margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#subscription', data-userid=${user.id}" onclick="subscriptionInfo(this.getAttribute('data-userid'))" type="button">Subscription Info</button>
+        <button style = "margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#device', data-userid=${user.id}" onclick="deviceInfo(this.getAttribute('data-userid'))" type="button">Device Info</button>
+        <button style = "margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#other', data-userid=${user.id}" onclick="otherInfo(this.getAttribute('data-userid'))" type="button">Other Info</button>
+    	<form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get" target="_blank">
+        	<button style = "margin: 0 3px; background-color:red; border: none;" class="btn btn-info" data-toggle="modal" type="submit">Crash reports</button>
+		</form>
+		<script>
+       	 	document.getElementById("myForm").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+            window.open(this.action, '_blank'); 
+        	});
+		</script>
+    </div>
 </div>
+
+
 
 </div>
 
@@ -160,15 +170,15 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content" >
       <div class="modal-header">
-        <h5 class="modal-title" id="deviceLabel">Device Info</h5>
-         
+        <h5 class="modal-title" id="deviceLabel">Device Info</h5>         
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+     
      <div class="modal-body" style="background-color: white;">
-    <!-- Add your subscription information here -->
-    
+    <div style="font-weight: bold; color: green;">No of times App Launched: <span id="appLaunchCount" style="color: green;"></span></div>
+    <!-- Add your subscription information here -->   	
     <table class="table" id="deviceTable">
         <thead>
             <tr>
@@ -209,13 +219,14 @@
         <thead>
             <tr>
                
-                <th>ContentId</th>
-                <th>ContentName</th>
-                <th>ContentType</th>
+                <th>Content Id</th>
+                <th>Content Name</th>
+                <th>Type</th>
                 <th>Studio</th>
                 <th>Action</th>
-                <th>createdAt</th>
-                <th>ModifiedAt</th>
+                <th>Elapsed Time (sec)</th>
+                <th>Event Created</th>
+                <th>Event Modified</th>
                 
             </tr>
         </thead>
@@ -317,18 +328,13 @@ async function deviceInfo(userId) {
 
     try {
         const response = await fetch(url);
-
         if (!response.ok) {
             throw new Error('Network response was not ok: ' + response.status);
         }
-
         const data = await response.json();
-
         console.log(data);
-
         // Update the modal content with the retrieved data
        updateDeviceInfo(data);
-
         // Show the modal
         $(modal).modal('show');
     } catch (error) {
@@ -338,6 +344,16 @@ async function deviceInfo(userId) {
 
 function updateDeviceInfo(data) {
     // Update Active Plan table
+    var appLaunchCount = data.deviceList[0].inc;
+
+    // Update the HTML element with the app launch count
+    var appLaunchElement = document.getElementById('appLaunchCount');
+    if (appLaunchElement) {
+        appLaunchElement.textContent = appLaunchCount;
+    } else {
+        console.error("Element with ID 'appLaunchCount' not found.");
+    }
+    
     var activePlanTable = document.getElementById('deviceTable');
     updateDeviceTable(activePlanTable, data.deviceList);
 
@@ -442,8 +458,10 @@ function updateOtherTable(table, planData) {
         cell = row.insertCell(4);
         cell.textContent =plan.play.action ;
         cell = row.insertCell(5);
-        cell.textContent =from.toISOString().slice(0, 10); ;
+        cell.textContent =plan.play.elapsedTime ;
         cell = row.insertCell(6);
+        cell.textContent =from.toISOString().slice(0, 10); ;
+        cell = row.insertCell(7);
         cell.textContent =to.toISOString().slice(0, 10); ;
         } else {
             var cell = row.insertCell(0);

@@ -5,12 +5,12 @@
    http://maven.apache.org/xsd/maven-4.0.0.xsd">
    
    <modelVersion>4.0.0</modelVersion>
-   <groupId>com.tutorialspoint</groupId>
-   <artifactId>demo</artifactId>
+   <groupId>com.sundirect</groupId>
+   <artifactId>crm</artifactId>
    <version>0.0.1-SNAPSHOT</version>
    <packaging>jar</packaging>
-   <name>demo</name>
-   <description>Demo project for Spring Boot</description>
+   <name>Sun Direct CRM</name>
+   <description>CRM project</description>
 
    <parent>
       <groupId>org.springframework.boot</groupId>
@@ -65,7 +65,7 @@
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-dependencies</artifactId>
-    <version>1.5.8.RELEASE</version>
+    <version>2.0.2.RELEASE</version>
     <type>pom</type>
     <scope>import</scope>
 </dependency>
