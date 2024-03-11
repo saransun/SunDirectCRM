@@ -65,9 +65,9 @@ public class SMSController {
 				model.addAttribute("message", "Please Enter Valid Input");
 			}
 		} else {
-			model.addAttribute("query", String.valueOf(query.get()));
-			model.addAttribute("filter", requestType.get());
-			model.addAttribute("message", "Please Enter Valid Input");
+			//model.addAttribute("query", String.valueOf(query.get()));
+			//model.addAttribute("filter", requestType.get());
+			model.addAttribute("message", "");
 		}
 		return "subscriber";
 	}
@@ -82,6 +82,7 @@ public class SMSController {
 			List<MapObject> mapList = new ArrayList<MapObject>();
 			deviceList = subsService.findDeviceInfoByUserId(userId);
 			model.addAttribute("deviceList", deviceList);
+			
 			if (deviceList.isEmpty()) {
 				MapObject mapObject = new MapObject();
 				mapObject.setMessage1("No Data available");
@@ -89,6 +90,7 @@ public class SMSController {
 				modelmap.put("deviceList", mapList);
 				return modelmap;
 			}
+			model.addAttribute("appLaunch", deviceList.size());
 			int inc = 0;
 			for (MyplexUserDevice my : deviceList) {
 				inc++;
