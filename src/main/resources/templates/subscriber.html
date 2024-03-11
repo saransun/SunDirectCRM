@@ -355,7 +355,7 @@ function updateDeviceTable(table, planData) {
         var row = table.getElementsByTagName('tbody')[0].insertRow();
         console.log(plan.message);
         
-        
+        if (plan.message === "success") {
    //  console.log(dateObject);
         var cell = row.insertCell(0);
         cell.textContent = plan.device.make;
@@ -365,7 +365,11 @@ function updateDeviceTable(table, planData) {
         cell.textContent =plan.device.os ;
         cell = row.insertCell(3);
         cell.textContent =plan.device.os_version ;
-        
+        } else {
+            var cell = row.insertCell(0);
+            cell.textContent =plan.message1;
+           
+        }
         
     });
 }
@@ -416,7 +420,7 @@ function updateOtherTable(table, planData) {
     // Update the table with new data
     planData.forEach(function (plan, index) {
         var row = table.getElementsByTagName('tbody')[0].insertRow();
-        
+        if (plan.message === "success") {
         var create = plan.play.createdAt;
 
         // Create a Date object using the timestamp
@@ -441,7 +445,11 @@ function updateOtherTable(table, planData) {
         cell.textContent =from.toISOString().slice(0, 10); ;
         cell = row.insertCell(6);
         cell.textContent =to.toISOString().slice(0, 10); ;
-        
+        } else {
+            var cell = row.insertCell(0);
+            cell.textContent =plan.message1;
+           
+        }
         
     });
 }
