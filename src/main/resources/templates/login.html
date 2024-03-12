@@ -5,22 +5,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - SMS</title>
+<title>Login - CRM</title>
 <meta name="_csrf" content="${_csrf.token}" />
 <meta name="_csrf_header" content="${_csrf.headerName}" />
 
 </head>
 
-<body class="gray-bg">
+<body style="background-color: #f5deb3;">
 	<section layout:fragment="content">
 		<div class="middle-box text-center loginscreen animated fadeInDown">
 			<div>
 				<div>
-					<img src="../images/apalya_logo.png  " alt="apalya_logo">
+					<img alt="image" class="img-circle" style="width:160px;height:130px;"
+							th:src="@{https://metaimg.sundirectgo.in/icons/sund_logo_portal.png}">
 				</div>
 				<a href="#"><small th:text="${version}"></small></a>
-				<h3>Subscriber Management System</h3>
-				<p>Login, To see it in action.</p>
+				<h3>Sun Direct GO CRM</h3>
 				<div th:if="${param.error != null}"
 					class="alert alert-danger alert-dismissable">
 					<button aria-hidden="true" data-dismiss="alert" class="close"
@@ -43,18 +43,15 @@
 							minlength="3" placeholder="Password" id="password" required>
 					</div>
 					
-					<button type="Submit"
-					onclick="newPage()"	class="btn btn-primary block full-width m-b loginButton" id="load">
+					<!-- <button type="Submit"
+						class="btn btn-primary block full-width m-b loginButton" id="load">
 						<i id="_loginButtonLoader" class='fa fa-spinner fa-spin'
 							style="display: none;"></i>Login
+					</button> -->
+					<button type="submit" class="btn btn-primary block full-width m-b loginButton" id="load" style="background-color: #007acc;">
+    					<i id="_loginButtonLoader" class="fa fa-spinner fa-spin" style="display: none;"></i>Login
 					</button>
-
-					<div class="">
-						<small>Copyright © 2018, Apalya Technologies.</small>
-					</div>
-					<div class="text-center">
-						<small>©2007-2018</small>
-					</div>
+					
 				</form>
 			</div>
 		</div>

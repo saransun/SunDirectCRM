@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
 import com.sundirect.crm.apientity.PlayerEventsPlayerevent;
+import com.sundirect.crm.bean.AppUser;
 import com.sundirect.crm.bean.MapObject;
+import com.sundirect.crm.config.AppUserService;
 import com.sundirect.crm.service.SubscriberService;
 import com.sundirect.crm.smsentity.Asset;
 import com.sundirect.crm.smsentity.Subscription;
@@ -27,6 +30,13 @@ public class SMSController {
 	private static final Logger log = LoggerFactory.getLogger(SMSController.class);
 	@Autowired
 	SubscriberService subsService;
+	
+	@Autowired
+	AppUserService appUserService;
+	
+	
+	@Value("${application.version}")
+	private String version;
  
 	@GetMapping(value = "/sms/subscriber/info")
 	public String customerInfo(Model model, @RequestParam(value = "query", required = true) Optional<String> query,
@@ -219,6 +229,19 @@ public class SMSController {
 		}
  
 		return modelmap;
+	}
+	
+	@GetMapping("/login/form")
+	public String login(Model model) {
+		log.info("model from /login/form" +model);
+		AppUser user = appUserService.getCurrentUser();
+		if (null == user) {
+			log.info("user" +user);
+			model.addAttribute("version", version);
+			return "login";
+		}
+		return "redirect:/";
+		
 	}
  
 }
