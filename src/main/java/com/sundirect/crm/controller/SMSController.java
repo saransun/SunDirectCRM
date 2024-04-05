@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +18,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sundirect.crm.apientity.MyplexUserDevice;
 import com.sundirect.crm.apientity.MyplexUserUser;
 import com.sundirect.crm.apientity.PlayerEventsPlayerevent;
 import com.sundirect.crm.bean.AppUser;
 import com.sundirect.crm.bean.MapObject;
 import com.sundirect.crm.config.AppUserService;
+import com.sundirect.crm.service.APIService;
 import com.sundirect.crm.service.SubscriberService;
 import com.sundirect.crm.smsentity.Asset;
 import com.sundirect.crm.smsentity.Subscription;
@@ -37,6 +44,8 @@ public class SMSController {
 	
 	@Value("${application.version}")
 	private String version;
+	@Autowired
+	APIService apiservice;
  
 	@GetMapping(value = "/sms/subscriber/info")
 	public String customerInfo(Model model, @RequestParam(value = "query", required = true) Optional<String> query,
@@ -243,5 +252,31 @@ public class SMSController {
 		return "redirect:/";
 		
 	}
- 
+	@GetMapping("/sms/plans/info")
+	public String allPlans(Model model,@RequestParam(name = "status") String status) {
+		String returnVal=apiservice.getAllPlanAPI(status);
+		model.addAttribute("planValue", returnVal);
+		return "plan1";
+		
+	}
+	@GetMapping(value = "/api/Allplans")
+	public String getAllPlan(Model model,@RequestParam(name = "status") String status,HttpServletRequest request) {			
+		
+		try {
+			String returnVal=apiservice.getAllPlanAPI(status);
+		//	JSONObject jsonObj=new JSONObject(returnVal);			
+			ObjectMapper objectMapper=new ObjectMapper();        
+			JsonNode jsonNode= objectMapper.readTree(returnVal);
+			log.info("json string: {}",jsonNode.get("results").get(0).get("planId"));
+			
+			model.addAttribute("planValue", jsonNode);
+			return "plan";
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			log.info("Exception occur: {}",e.getMessage());
+			return null;
+		}
+	
+	}
 }

@@ -3,10 +3,11 @@ package com.sundirect.crm.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,27 +26,7 @@ import com.sundirect.crm.utils.ApiReturn;
 public class APIController {
 	private static final Logger log = LoggerFactory.getLogger(APIController.class);
 	@Autowired
-	APIService apiservice;
-	
-	@GetMapping(value = "/api/Allplans")
-	public JsonNode getAllPlan(@RequestParam(name = "status") String status,HttpServletRequest request) {			
-		
-		try {
-			String returnVal=apiservice.getAllPlanAPI(status);
-		//	JSONObject jsonObj=new JSONObject(returnVal);			
-			ObjectMapper objectMapper=new ObjectMapper();        
-			JsonNode jsonNode= objectMapper.readTree(returnVal);
-			log.info("json string: {}",jsonNode.toString());
-			return jsonNode;
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception occur: {}",e.getMessage());
-			return null;
-		}
-	
-	}
-	
+	APIService apiservice;	
 	
 	@PostMapping(value = "/api/v1/order", consumes = "application/json")	
 	public JsonNode createOrderSMS(@Valid @RequestBody OrderCreation model, HttpServletRequest request) {
