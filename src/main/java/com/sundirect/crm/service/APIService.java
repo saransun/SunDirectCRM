@@ -14,4 +14,6 @@ public interface APIService {
 	
 	String getAllSubscription(Integer userId, String country);
 	
+	
+	String getUserInfo(String info,Integer keyVal,String param);
 }

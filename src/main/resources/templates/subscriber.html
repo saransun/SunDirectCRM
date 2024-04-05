@@ -6,7 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscriber - CRM</title>
-    
 </head>
 
 <body>
@@ -26,225 +25,176 @@
                     <div class="ibox-title">
                         <h5>View Subscribers</h5>
                         <!-- </a> -->
+                        <form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get" target="_blank">
+                            <a style="color: #E74C3C; font-weight: bold; margin-left: 50px; text-decoration: underline;" href="#" onclick="document.getElementById('myForm').submit()">Crash reports</a>
+                        </form>
 
                         <div class="ibox-tools">
-                            <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
-                            </a>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
 
                             <ul class="dropdown-menu dropdown-user">
                                 <li><a href="#">Config option 1</a></li>
                                 <li><a href="#">Config option 2</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="ibox-content">
-
                         <div class="search_bar">
                             <form id="searchForm" class="navbar-form" role="search">
                                 <div class="col-sm-6">
-                                    <select class="form-control carousel-search-select valid"
-        id="searchType" aria-invalid="false" name="requestType"
-        th:object="${filter}">
-    <option value="">Select</option>
-    <option value="UserID" th:selected="${filter == 'UserID'}">Search By UserId</option>
-    <option value="SMC" th:selected="${filter == 'SMC'}">Search By SMC</option>
-    <option value="MobileNo" th:selected="${filter == 'MobileNo'}">Search By mobile</option>
-</select>
-
+                                    <select class="form-control carousel-search-select valid" id="searchType" aria-invalid="false" name="requestType" th:object="${filter}">
+                                        <option value="">Select</option>
+                                        <option value="UserID" th:selected="${filter == 'UserID'}">Search By UserId</option>
+                                        <option value="SMC" th:selected="${filter == 'SMC'}">Search By SMC</option>
+                                        <option value="MobileNo" th:selected="${filter == 'MobileNo'}">Search By mobile</option>
+                                    </select>
                                 </div>
-
                                 <div class="input-group clearable-input col-sm-6">
-                                    <input type="text" class="form-control"
-                                           placeholder="Search subscriber mobileNo" id="query"
-                                           name="query" th:value="${query}"> <span
-                                           data-clear-input>&times;</span>
+                                    <input type="text" class="form-control" placeholder="Search subscriber mobileNo" id="query" name="query" th:value="${query}">
+                                    <span data-clear-input>&times;</span>
                                     <div class="input-group-btn">
                                         <button class="btn btn-primary" data-target="#searchAdd" id="searchButton" type="submit">GO!</button>
                                     </div>
                                 </div>
-                               
                             </form>
                         </div>
 
-    <div th:if="${user != null}" id="userDetails" >
-    <h2 style="color: #6495ED; font-weight: bold; text-decoration: underline;">User Details:</h2>
-  <div th:each="user : ${user}">
-    <dl class="user-details-list">
-        <div class="row">
-            <div class="col-lg-3">
-                <dt id="userId">User ID: <span th:text="${user.id}"></span></dt> <br />
-                <dt>Name: <span th:text="${user.first + ' ' + user.last}"></span></dt> <br />
-                <dt>Mobile No: <span th:text="${user.mobileNo}"></span></dt>
-            </div>
-
-            <div class="col-lg-3">
-                <dt>SMC: <span th:text="${user.smc}"></span></dt><br />
-                <dt>Email: <span th:text="${user.email_id}"></span></dt><br />
-                <dt>Address: <span></span></dt>
-            </div>
-        </div>
-    </dl>
-    <br />
-    <div style="display: flex; margin-bottom: 10px;">      
-       <button style = " margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#subscription', data-userid=${user.id}" onclick="subscriptionInfo(this.getAttribute('data-userid'))" type="button">Subscription Info</button>
-        <button style = "margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#device', data-userid=${user.id}" onclick="deviceInfo(this.getAttribute('data-userid'))" type="button">Device Info</button>
-        <button style = "margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#other', data-userid=${user.id}" onclick="otherInfo(this.getAttribute('data-userid'))" type="button">Other Info</button>
-    	<form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get" target="_blank">
-        	<button style = "margin: 0 3px; background-color:red; border: none;" class="btn btn-info" data-toggle="modal" type="submit">Crash reports</button>
-		</form>
-		<script>
-       	 	document.getElementById("myForm").addEventListener("submit", function(event) {
-            event.preventDefault(); 
-            window.open(this.action, '_blank'); 
-        	});
-		</script>
-    </div>
-</div>
-
-
-
-</div>
-
-
-                </div>
-                <div th:if="${user == null}">
-
-<span style="color: #C0392B; font-weight: bold;" th:text="${message}"> </span>
-
+                        <div th:if="${user != null}" id="userDetails">
+                            <h2 style="color: #6495ED; font-weight: bold; text-decoration: underline;">User Details:</h2>
+                            <div th:each="user : ${user}">
+                                <dl class="user-details-list">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <dt id="userId">User ID: <span th:text="${user.id}"></span></dt> <br />
+                                            <dt>Name: <span th:text="${user.fields.first + ' ' + user.fields.last}"></span></dt> <br />
+                                            <dt>Mobile No: <span th:text="${user.fields.mobileNo}"></span></dt>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <dt>SMC: <span th:text="${user.fields.smc}"></span></dt><br />
+                                            <dt>Email: <span th:text="${user.fields.emailId}"></span></dt><br />
+                                            <dt>Address: <span></span></dt>
+                                        </div>
+                                    </div>
+                                </dl>
+                                <br />
+                                <div style="display: flex; margin-bottom: 10px;">
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#subscription', data-userid=${user.id}" onclick="subscriptionInfo(this.getAttribute('data-userid'))" type="button">Subscription Info</button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#device', data-userid=${user.id}" onclick="deviceInfo(this.getAttribute('data-userid'))" type="button">Device Info</button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#other' ,data-userid=${user.id}" onclick="otherInfo(this.getAttribute('data-userid'))" type="button">Other Info</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${user == null}">
+                            <span style="color: #C0392B; font-weight: bold;" th:text="${message}"></span>
+                        </div>
                     </div>
-            </div>
-        </div>
-
-    </div>
-
-<div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="width:800px;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="subscriptionLabel">Subscription Info</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body" style="background-color: white;">
-                <!-- Your HTML table structure -->
-                <dt style="color: green;">Active Plan </dt>
-<table id="activePlanTable" class="table">
-    <thead>
-        <tr>
-            <th>S.no</th>
-            <th>Sms_Plan_Id</th>
-            <th>Plan</th>
-            <th>Start_From</th>
-            <th>Valid_Till</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-<!-- Repeat the structure for the expired plan table if you haven't already -->
-<dt style="color:red;">Expired Plan</dt>
-<table id="expiredPlanTable" class="table">
-    <thead>
-        <tr>
-            <th>S.no</th>
-            <th>Sms_Plan_Id</th>
-            <th>Plan</th>
-            <th>Start_From</th>
-            <th>Valid_Till</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!--  device Modal -->
-<div class="modal fade" id="device" tabindex="-1" role="dialog" aria-labelledby="deviceLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content" >
-      <div class="modal-header">
-        <h5 class="modal-title" id="deviceLabel">Device Info</h5>         
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-     
-     <div class="modal-body" style="background-color: white;">
-    <div style="font-weight: bold; color: green;">No of times App Launched: <span id="appLaunchCount" style="color: green;"></span></div>
-    <!-- Add your subscription information here -->   	
-    <table class="table" id="deviceTable">
-        <thead>
-            <tr>
-               
-                <th>Device</th>
-                <th>Model</th>
-                <th>Os</th>
-                <th>Os_version</th>
-            </tr>
-        </thead>
-        <tbody>
-           
-        </tbody>
-    </table>
-</div>
-
-      <div   class="modal-body" style="background-color: white;">
-      <span style="color: #C0392B; font-weight: bold;" th:text="${message}"> </span>
-       </div>
-      </div>
-    
+    <div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:800px;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subscriptionLabel">Subscription Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <table id="activePlanTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Status</th>
+                                <th>Plan Name</th>
+                                <th>Start_From</th>
+                                <th>Valid_Till</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  
-  <!--  Other Modal -->
-<div class="modal fade" id="other" tabindex="-1" role="dialog" aria-labelledby="otherLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content" style="width:800px;">
-      <div class="modal-header">
-        <h5 class="modal-title" id="otherLabel">Other Info</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" style="background-color: white;">
-        <table class="table" id="otherTable">
-        <thead>
-            <tr>
-               
-                <th>Content Id</th>
-                <th>Content Name</th>
-                <th>Type</th>
-                <th>Studio</th>
-                <th>Action</th>
-                <th>Elapsed Time (sec)</th>
-                <th>Event Created</th>
-                <th>Event Modified</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-           
-        </tbody>
-    </table>
-      </div>
-    
-    </div>
-  </div>
-</div>
-</div>
 
+    <!-- Device Modal -->
+    <div class="modal fade" id="device" tabindex="-1" role="dialog" aria-labelledby="deviceLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deviceLabel">Device Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <div style="font-weight: bold; color: green;">No of times App Launched: <span id="appLaunchCount" style="color: green;"></span></div>
+                    <table class="table" id="deviceTable">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Model</th>
+                                <th>Os</th>
+                                <th>Os_version</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <span style="color: #C0392B; font-weight: bold;" th:text="${message}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Modal -->
+    <div class="modal fade" id="other" tabindex="-1" role="dialog" aria-labelledby="otherLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:800px;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otherLabel">Other Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <table class="table" id="otherTable">
+                        <thead>
+                            <tr>
+                                <th>Content Id</th>
+                                <th>Content Name</th>
+                                <th>Type</th>
+                                <th>Studio</th>
+                                <th>Action</th>
+                                <th>Elapsed Time (sec)</th>
+                                <th>Event Created</th>
+                                <th>Event Modified</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    // Open Firebase console in a new tab
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("myForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            window.open(this.action, '_blank');
+        });
+    });
+</script>
 <script>
 
 async function subscriptionInfo(userId) {
-    var url = '/subscriptionInfo?userId=' + userId;
+    var url = '/api/user/subscription/'+userId+'/IN';
     var modal = document.getElementById('subscription'); // Get the modal element
 
     try {
@@ -271,55 +221,69 @@ async function subscriptionInfo(userId) {
 
 function updateModalContent(data) {
     // Update Active Plan table
+    console.log(data.results)
+   
     var activePlanTable = document.getElementById('activePlanTable');
-    updateTable(activePlanTable, data.Active);
+    updateTable(activePlanTable, data);
 
     // Update Expired Plan table
-    var expiredPlanTable = document.getElementById('expiredPlanTable');
-    updateTable(expiredPlanTable, data.Expired);
+   // var expiredPlanTable = document.getElementById('expiredPlanTable');.results
+   // updateTable(expiredPlanTable, data.Expired);
    
 }
 
 function updateTable(table, planData) {
     // Clear existing rows
-    table.getElementsByTagName('tbody')[0].innerHTML = '';
+    var tbody = table.getElementsByTagName('tbody')[0];
+    tbody.innerHTML = '';
 
     // Update the table with new data
-    planData.forEach(function (plan, index) {
-        var row = table.getElementsByTagName('tbody')[0].insertRow();
+    if (planData.status === "SUCCESS" && planData.results.length > 0) {
+        for (let index = planData.results.length - 1; index >= 0; index--) {
+            let plan = planData.results[index];
+            var row = tbody.insertRow();
 
-        if (plan.message === "success") {
-            var validFrom = plan.sub.validFrom;
-            var validTill = plan.sub.validTill;
+            var validFrom = plan.validityFrom;
+            var validTill = plan.validityTill;
 
             // Create Date objects using the timestamps
             var from = new Date(validFrom);
             var to = new Date(validTill);
 
             var cell = row.insertCell(0);
-            cell.textContent = index + 1;
+            cell.textContent = planData.results.length - index;
 
             cell = row.insertCell(1);
-            cell.textContent = plan.sub.plan.id;
+            var button = document.createElement("button");
+            button.textContent = plan.status;
+            if (plan.status === "Active") {
+                button.classList.add("green-button");
+            } else if (plan.status === "Expired") {
+                button.classList.add("red-button");
+            }
+            cell.appendChild(button);
 
             cell = row.insertCell(2);
-            cell.textContent = plan.sub.plan.name;
+            cell.textContent = plan.plan.name;
 
             cell = row.insertCell(3);
             cell.textContent = from.toISOString().slice(0, 10); // Display date only
 
             cell = row.insertCell(4);
             cell.textContent = to.toISOString().slice(0, 10); // Display date only
-        } else {
-            var cell = row.insertCell(0);
-            cell.textContent =plan.message1;
-           
         }
-    });
+    } else {
+        var row = tbody.insertRow();
+        var cell = row.insertCell(0);
+        cell.colSpan = "5";
+        cell.innerHTML = "<b>No data is available</b>";
+    }
 }
 
 
+
 </script>
+
 <script>
 
 async function deviceInfo(userId) {
@@ -374,13 +338,13 @@ function updateDeviceTable(table, planData) {
         if (plan.message === "success") {
    //  console.log(dateObject);
         var cell = row.insertCell(0);
-        cell.textContent = plan.device.make;
+        cell.textContent = plan.device.fields.make;
         cell = row.insertCell(1);
-        cell.textContent =plan.device.model;
+        cell.textContent =plan.device.fields.model;
         cell = row.insertCell(2);
-        cell.textContent =plan.device.os ;
+        cell.textContent =plan.device.fields.os ;
         cell = row.insertCell(3);
-        cell.textContent =plan.device.os_version ;
+        cell.textContent =plan.device.fields.os_version ;
         } else {
             var cell = row.insertCell(0);
             cell.textContent =plan.message1;
@@ -391,7 +355,6 @@ function updateDeviceTable(table, planData) {
 }
 
 </script>
-
 <script>
 
 async function otherInfo(userId) {
@@ -473,14 +436,28 @@ function updateOtherTable(table, planData) {
 }
 
 </script>
+<style>
+.green-button {
+    background-color: green;
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 5px 10px; /* Adjust padding */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
+.red-button {
+    background-color: red;
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 5px 10px; /* Adjust padding */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
 
+</style>
 </section>
 
 <div layout:fragment="customscripts">
     <script th:src="@{/scripts/subscriber.js}"></script>
     <script th:src="@{/scripts/search.js}"></script>
-     
-   
 </div>
 
 

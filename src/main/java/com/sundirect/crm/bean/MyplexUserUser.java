@@ -1,22 +1,18 @@
-package com.sundirect.crm.apientity;
+package com.sundirect.crm.bean;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name="myplex_user_user")
+
+
 public class MyplexUserUser {
-	@Id	
+	
 	private Integer id;
 	private String first;
 	private String last;
 	private String password_hash;
 	
-	@Column(name = "mobile_no", nullable = false)
+	
 	private Long mobileNo;
 	
 	private Long mobile_no_verified;
