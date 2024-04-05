@@ -39,6 +39,9 @@ public class SecurityConfig {
 
 			http.csrf().disable().antMatcher("/api/**").httpBasic().disable().authorizeRequests().antMatchers("/api/**")
 					.permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			
+			http.csrf().disable().antMatcher("/sms/**").httpBasic().disable().authorizeRequests().antMatchers("/sms/**")
+			.permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		}
 	}
 
@@ -73,12 +76,9 @@ public class SecurityConfig {
 			log.info("order2 configure2 method");
 			
 			http.authorizeRequests()
-					.antMatchers("/login/**", "/v2/api-docs", "/configuration/9ui", "/swagger-resources/**",
-							"/configuration/**", "/swagger-ui.html", "/webjars/**", "/css/**", "/fonts/**",
-							"/images/**", "/js/**", "/locales/**", "/font-awesome/**", "/scripts/**","/hystrix/**","/hystrix.stream/**", "/actuator/**","/cache/**")
+					.antMatchers("/login/**")
 					.permitAll().antMatchers("/tenant").hasRole("ADMIN")
 					.antMatchers("/ck/*").permitAll()
-					.antMatchers("/emailSettings/*").permitAll()
 					.antMatchers("/subscriber/subscription/*/order", "/asset/*/bundle", "/bundle/*/plan").permitAll()
 					.antMatchers(HttpMethod.GET, "/plan/*/bill/*/modify", "/plan/*/bill/new").hasRole("ADMIN")
 					.antMatchers(HttpMethod.GET, "/ck/*").hasRole("ADMIN")

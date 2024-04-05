@@ -9,7 +9,7 @@ import com.sundirect.crm.bean.AppUser;
 
 public interface AppUserService extends UserDetailsService {
 
-	void save(AppUser user);
+	//void save(AppUser user);
 
 	List<AppUser> fetchUsers();
 

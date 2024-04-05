@@ -56,7 +56,14 @@ public class APIServiceImpl implements APIService{
 	/*
 	 * @Autowired SHACheckSum checkSum;
 	 */
-
+	@Value("${API.info.uri}")
+	private String apiUrl;
+	
+	@Value("${API.info.user}")
+	private String apiEndPoint;
+	
+	@Value("${API.info.key}")
+	private String key;
 	@Override
 	public String getAllPlanAPI(String status) {
 		
@@ -293,6 +300,59 @@ public class APIServiceImpl implements APIService{
 			}
 		}
 	}
+
+	@Override
+	public String getUserInfo(String info,Integer keyVal,String param) {
+		HttpURLConnection connection = null;
+		String resp;
+		String result;
+		try {
+			String path=apiUrl+apiEndPoint+"?"+key+"="+keyVal+"&"+param+"="+info;
+			log.info("All plan Url Path: {}",path);
+			URL url= new URL(path);			
+			connection=(HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
+			///connection.setDoOutput(true);
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			log.info("content-type " + connection.getContentType());
+
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line.trim());
+				}
+				br.close();
+				log.info("response" + sb.toString());
+				resp = sb.toString();
+				return resp;
+			} else {
+				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				resp = connection.getResponseMessage();
+				return resp;
+			}
+			
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			log.error("exception in notification with message {} for ", e.getMessage());
+			return null;
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+	
+	
+	
 	
 
 }
