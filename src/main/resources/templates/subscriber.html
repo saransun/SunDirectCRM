@@ -3,6 +3,9 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layoutLogged">
 <head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.css"/>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscriber - CRM</title>
@@ -10,7 +13,6 @@
 
 <body>
 <section layout:fragment="content">
-
     <!-- Navigation menu start -->
     <!-- <div th:include="navigationFragment :: navigationBar"></div> -->
     <!-- Navigation menu end -->
@@ -24,64 +26,83 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>View Subscribers</h5>
-                        <!-- </a> -->
-                        <form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get" target="_blank">
-                            <a style="color: #E74C3C; font-weight: bold; margin-left: 50px; text-decoration: underline;" href="#" onclick="document.getElementById('myForm').submit()">Crash reports</a>
+                        <form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get"
+                              target="_blank">
+                            <a style="color: #E74C3C; font-weight: bold; margin-left: 50px; text-decoration: underline;"
+                               href="#" onclick="document.getElementById('myForm').submit()">Crash reports</a>
                         </form>
-
                         <div class="ibox-tools">
                             <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-
                             <ul class="dropdown-menu dropdown-user">
                                 <li><a href="#">Config option 1</a></li>
                                 <li><a href="#">Config option 2</a></li>
                             </ul>
                         </div>
                     </div>
-
                     <div class="ibox-content">
                         <div class="search_bar">
                             <form id="searchForm" class="navbar-form" role="search">
                                 <div class="col-sm-6">
-                                    <select class="form-control carousel-search-select valid" id="searchType" aria-invalid="false" name="requestType" th:object="${filter}">
+                                    <select class="form-control carousel-search-select valid searchType"
+                                            id="searchType2" aria-invalid="false" name="requestType"
+                                            th:object="${filter}">
                                         <option value="">Select</option>
-                                        <option value="UserID" th:selected="${filter == 'UserID'}">Search By UserId</option>
+                                        <option value="UserID" th:selected="${filter == 'UserID'}">Search By UserId
+                                        </option>
                                         <option value="SMC" th:selected="${filter == 'SMC'}">Search By SMC</option>
-                                        <option value="MobileNo" th:selected="${filter == 'MobileNo'}">Search By mobile</option>
+                                        <option value="MobileNo" th:selected="${filter == 'MobileNo'}">Search By mobile
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="input-group clearable-input col-sm-6">
-                                    <input type="text" class="form-control" placeholder="Search subscriber mobileNo" id="query" name="query" th:value="${query}">
+                                    <input type="text" class="form-control" placeholder="Search subscriber mobileNo"
+                                           id="query" name="query" th:value="${query}">
                                     <span data-clear-input>&times;</span>
                                     <div class="input-group-btn">
-                                        <button class="btn btn-primary" data-target="#searchAdd" id="searchButton" type="submit">GO!</button>
+                                        <button class="btn btn-primary" data-target="#searchAdd" id="searchButton"
+                                                type="submit">GO!
+                                        </button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-
                         <div th:if="${user != null}" id="userDetails">
                             <h2 style="color: #6495ED; font-weight: bold; text-decoration: underline;">User Details:</h2>
                             <div th:each="user : ${user}">
                                 <dl class="user-details-list">
                                     <div class="row">
                                         <div class="col-lg-3">
-                                            <dt id="userId">User ID: <span th:text="${user.id}"></span></dt> <br />
-                                            <dt>Name: <span th:text="${user.fields.first + ' ' + user.fields.last}"></span></dt> <br />
+                                            <dt id="userId">User ID: <span th:text="${user.id}"></span></dt> <br/>
+                                            <dt>Name: <span th:text="${user.fields.first + ' ' + user.fields.last}"></span></dt> <br/>
                                             <dt>Mobile No: <span th:text="${user.fields.mobileNo}"></span></dt>
                                         </div>
                                         <div class="col-lg-3">
-                                            <dt>SMC: <span th:text="${user.fields.smc}"></span></dt><br />
-                                            <dt>Email: <span th:text="${user.fields.emailId}"></span></dt><br />
+                                            <dt>SMC: <span th:text="${user.fields.smc}"></span></dt><br/>
+                                            <dt>Email: <span th:text="${user.fields.emailId}"></span></dt><br/>
                                             <dt>Address: <span></span></dt>
                                         </div>
                                     </div>
                                 </dl>
-                                <br />
+                                <br/>
                                 <div style="display: flex; margin-bottom: 10px;">
-                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#subscription', data-userid=${user.id}" onclick="subscriptionInfo(this.getAttribute('data-userid'))" type="button">Subscription Info</button>
-                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#device', data-userid=${user.id}" onclick="deviceInfo(this.getAttribute('data-userid'))" type="button">Device Info</button>
-                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal" th:attr="data-target='#other' ,data-userid=${user.id}" onclick="otherInfo(this.getAttribute('data-userid'))" type="button">Other Info</button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                            th:attr="data-target='#subscription', data-userid=${user.id}"
+                                            onclick="subscriptionInfo(this.getAttribute('data-userid'))"
+                                            type="button">Subscription Info
+                                    </button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                            th:attr="data-target='#device', data-userid=${user.id}"
+                                            onclick="deviceInfo(this.getAttribute('data-userid'))"
+                                            type="button">Device Info
+                                    </button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                            th:attr="data-target='#other' ,data-userid=${user.id}"
+                                            onclick="otherInfo(this.getAttribute('data-userid'))"
+                                            type="button">Other Info
+                                    </button>
+                                    <button style="margin: 0 600px;" class="btn btn-info" data-toggle="modal"
+                                            data-target='#createPlan' type="button">Create Plan
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -151,38 +172,122 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="createPlan" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="subscriptionLabel">Subscription Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background-color: white;">
+                <form id="subscriptionForm">
+                    <input type="hidden" value="create" class="form-control" name="action">
+                    
+                    <div class="form-group" ">
+    <label for="">Plan Name</label>
 
-    <!-- Other Modal -->
-    <div class="modal fade" id="other" tabindex="-1" role="dialog" aria-labelledby="otherLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:800px;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="otherLabel">Other Info</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" style="background-color: white;">
-                    <table class="table" id="otherTable">
-                        <thead>
-                            <tr>
-                                <th>Content Id</th>
-                                <th>Content Name</th>
-                                <th>Type</th>
-                                <th>Studio</th>
-                                <th>Action</th>
-                                <th>Elapsed Time (sec)</th>
-                                <th>Event Created</th>
-                                <th>Event Modified</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+
+<!-- Select dropdown -->
+<select class="form-control searchType" aria-invalid="false" name="packageIds">
+   <option value="">Select</option>
+        <!-- Loop through the JSON array and dynamically generate options -->
+        <option th:each="plan : ${finalList}" th:value="${plan.fields.sdPlanId}" th:text="${plan.fields.plan_name}"></option>
+    <!-- Loop through the JSON array and dynamically generate options -->
+    
+</select>
+</div>
+
+                    
+                    <div th:each="user : ${user}">
+                        <div class="form-group">
+                            <label for="smc">SMC</label>
+                            <input th:value="${user.fields.smc}" type="text" class="form-control" id="smc" name="smc">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobileNo">Mobile No</label>
+                            <input th:value="${user.fields.mobileNo}"  type="text" class="form-control" id="mobileNo" name="mobileNo">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="background-color: white;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
             </div>
         </div>
     </div>
-    <script>
+</div>
+
+
+
+    <!-- Other Modal -->
+    <!-- Other Modal -->
+<div class="modal fade" id="other" tabindex="-1" role="dialog" aria-labelledby="otherLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document"> <!-- Changed modal width to large -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otherLabel">Other Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background-color: white;">
+              <div class="col-sm-6">
+    <div class="col-sm-1">
+        <h5 style="padding-top: 8px">From:</h5>
+    </div>
+    <div class="col-sm-5">
+        <div class="form-group" id="data_10">
+            <div class="input-group date">
+                <input type="date" id="_planFromDate" name="_planFromDate" class="form-control" >
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-1">
+        <h5 style="padding-top: 8px; padding-left: 10px">To:</h5>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group" id="data_10">
+            <div class="input-group date">
+                <input type="date" id="_planToDate" name="_planToDate" class="form-control" >
+            </div>
+        </div>
+    </div>
+    
+</div>
+  <div th:if="${user != null}" id="userDetails">
+   <div th:each="user : ${user}">
+<div class="col-sm-1" style="padding-left: 20px;">
+        <button class="btn btn-primary" th:attr="data-target='#other' ,data-userid=${user.id}"
+                                            onclick="otherInfo(this.getAttribute('data-userid'))" id="searchButton" type="submit" >Click Here!</button>
+    </div>
+     </div>
+</div>
+                <table class="table" id="otherTable">
+                    <thead>
+                        <tr>
+                            <th>Content Id</th>
+                            <th>Content Name</th>
+                            <th>Type</th>
+                            <th>Studio</th>
+                            <th>Action</th>
+                            <th>Elapsed Time (sec)</th>
+                            <th>Event Created</th>
+                            <th>Event Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ <script>
     // Open Firebase console in a new tab
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("myForm").addEventListener("submit", function(event) {
@@ -356,61 +461,65 @@ function updateDeviceTable(table, planData) {
 
 </script>
 <script>
-
 async function otherInfo(userId) {
-    var url = '/otherInfo?userId=' + userId;
+	// Get the input element
+	var fromDateInput = document.getElementById('_planFromDate');
+	var toDateInput = document.getElementById('_planToDate');
+	
+	// Get the value of the input element
+	var fromDateValue = fromDateInput.value;
+	var toDateValue = toDateInput.value;
+    var url = '/otherInfo?userId=' + userId+'&startDate='+fromDateValue+'&endDate='+toDateValue;
     var modal = document.getElementById('other'); // Get the modal element
-
+ 
     try {
         const response = await fetch(url);
-
+ 
         if (!response.ok) {
             throw new Error('Network response was not ok: ' + response.status);
         }
-
+ 
         const data = await response.json();
-
+ 
         console.log(data);
-
+ 
         // Update the modal content with the retrieved data
        updateOtherInfo(data);
-
+ 
         // Show the modal
         $(modal).modal('show');
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
-
+ 
 function updateOtherInfo(data) {
     // Update Active Plan table
     var activePlanTable = document.getElementById('otherTable');
     updateOtherTable(activePlanTable, data.otherInfo);
-
+ 
     // Update Expired Plan table
-    
-    
-    
+
 }
 function updateOtherTable(table, planData) {
     // Clear existing rows
     table.getElementsByTagName('tbody')[0].innerHTML = '';
-
+ 
     // Update the table with new data
     planData.forEach(function (plan, index) {
         var row = table.getElementsByTagName('tbody')[0].insertRow();
         if (plan.message === "success") {
-        var create = plan.play.createdAt;
-
+        var create = plan.playerEvent.fields.created_at;
+ 
         // Create a Date object using the timestamp
         var from = new Date(create);
-        var modified = plan.play.modifiedAt;
-
+        var modified = plan.playerEvent.fields.modified_at;
+ 
         // Create a Date object using the timestamp
         var to = new Date(modified);
    //  console.log(dateObject);
         var cell = row.insertCell(0);
-        cell.textContent = plan.asset.id;
+        cell.textContent = plan.asset.assetId;
       //  console.log(  cell.textContent);
         cell = row.insertCell(1);
         cell.textContent =plan.asset.name;
@@ -419,22 +528,96 @@ function updateOtherTable(table, planData) {
         cell = row.insertCell(3);
         cell.textContent =plan.asset.studioName ;
         cell = row.insertCell(4);
-        cell.textContent =plan.play.action ;
+        cell.textContent =plan.playerEvent.fields.action ;
         cell = row.insertCell(5);
-        cell.textContent =plan.play.elapsedTime ;
+        cell.textContent =plan.playerEvent.fields.elapsed_time ;
         cell = row.insertCell(6);
-        cell.textContent =from.toISOString().slice(0, 10); ;
+        cell.textContent =from.toISOString().slice(0, 30); ;
         cell = row.insertCell(7);
-        cell.textContent =to.toISOString().slice(0, 10); ;
+        cell.textContent =to.toISOString().slice(0, 30); ;
         } else {
             var cell = row.insertCell(0);
             cell.textContent =plan.message1;
-           
         }
-        
     });
 }
 
+</script>
+<script>
+    function submitForm() {
+        var form = document.getElementById("subscriptionForm");
+        var formData = new FormData(form);
+        var jsonData = {};
+        formData.forEach(function(value, key) {
+            jsonData[key] = value;
+        });
+        fetch('/api/v1/apiOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+        	$('#createPlan').modal('hide');
+            // Handle success
+            console.log('Success:', data);
+            swal("Success!", "Form submitted successfully", "success");
+            // You can show a success message or perform any other action
+        })
+        .catch(error => {
+        	$('#createPlan').modal('hide');
+        	 swal("Failed!", "Form submitted successfully", "error");
+            // Handle errors
+            console.error('Error:', error);
+            // You can show an error message or perform any other action
+        });
+    }
+</script>
+<script>
+function eventData(){
+
+	// Get the input element
+	var fromDateInput = document.getElementById('_planFromDate');
+	var toDateInput = document.getElementById('_planToDate');
+	
+	// Get the value of the input element
+	var fromDateValue = fromDateInput.value;
+	var toDateValue = toDateInput.value;
+
+	// Now, fromDateValue contains the value of the input field
+	console.log(fromDateValue);
+	console.log(toDateValue);
+
+}
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.searchType').select2({
+            placeholder: "Select option",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#_apiPropFromDate').datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeYear: true,
+            changeMonth: true
+        });
+
+        $('#_apiPropToDate').datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeYear: true,
+            changeMonth: true
+        });
+    });
 </script>
 <style>
 .green-button {
@@ -453,11 +636,15 @@ function updateOtherTable(table, planData) {
 }
 
 </style>
+
 </section>
 
 <div layout:fragment="customscripts">
-    <script th:src="@{/scripts/subscriber.js}"></script>
-    <script th:src="@{/scripts/search.js}"></script>
+    <!-- Your custom scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 </div>
 
 
