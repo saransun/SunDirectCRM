@@ -7,10 +7,11 @@ import com.sundirect.crm.smsentity.Subscription;
 */
 public class MapObject {
 	
-	
+	private Asset asset;
 	//private Subscription sub;
 	private DeviceInfo device;
 	//private PlayerEventsPlayerevent play;
+	private PlayerEvent playerEvent;
 	private String message;
 	private String message1;
 	private Integer inc;
@@ -38,7 +39,19 @@ public class MapObject {
 	public void setInc(Integer inc) {
 		this.inc = inc;
 	}
-
+	public Asset getAsset() {
+		return asset;
+	}
+	public void setAsset(Asset asset) {
+		this.asset = asset;
+	}
+	public PlayerEvent getPlayerEvent() {
+		return playerEvent;
+	}
+	public void setPlayerEvent(PlayerEvent playerEvent) {
+		this.playerEvent = playerEvent;
+	}
+	
 	
 	 
 

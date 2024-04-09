@@ -40,8 +40,8 @@ public class SecurityConfig {
 			http.csrf().disable().antMatcher("/api/**").httpBasic().disable().authorizeRequests().antMatchers("/api/**")
 					.permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 			
-			http.csrf().disable().antMatcher("/sms/**").httpBasic().disable().authorizeRequests().antMatchers("/sms/**")
-			.permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			//http.csrf().disable().antMatcher("/sms/**").httpBasic().disable().authorizeRequests().antMatchers("/sms/**")
+			//.permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		}
 	}
 
@@ -80,21 +80,11 @@ public class SecurityConfig {
 					.permitAll().antMatchers("/tenant").hasRole("ADMIN")
 					.antMatchers("/ck/*").permitAll()
 					.antMatchers("/subscriber/subscription/*/order", "/asset/*/bundle", "/bundle/*/plan").permitAll()
-					.antMatchers(HttpMethod.GET, "/plan/*/bill/*/modify", "/plan/*/bill/new").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/ck/*").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/emailSettings/*").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/plan/*/modify", "/plan/new").hasRole("ADMIN")
-					.antMatchers(HttpMethod.POST, "/plan/*/bill", "/plan").hasRole("ADMIN")
-					.antMatchers(HttpMethod.PUT, "/plan/*/bill/*", "/plan/*").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/ck/*").hasRole("ADMIN")
-					.antMatchers("/emailSettings/*", "/ck/*").permitAll()
-					.antMatchers("/info","/env","/health","/metrics").permitAll().anyRequest().authenticated()
+					.antMatchers(HttpMethod.GET, "/other").hasRole("ADMIN")
+					.anyRequest().authenticated()
 					.antMatchers(HttpMethod.PUT, "/coupon/*").hasRole("ADMIN").antMatchers(HttpMethod.POST, "/coupon")
 					.hasRole("ADMIN").antMatchers(HttpMethod.POST, "/discount").hasRole("ADMIN")
-					.antMatchers(HttpMethod.PUT, "/discount/*").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/coupon/new", "/plan/*/modify").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/coupon/*", "/coupon/*/modify").hasRole("ADMIN")
-					.antMatchers(HttpMethod.GET, "/discount/new", "/discount/*/modify").hasRole("ADMIN").anyRequest()
+					.anyRequest()
 					.authenticated().and().formLogin().loginPage("/login/form").loginProcessingUrl("/login")
 					.usernameParameter("username").passwordParameter("password").successHandler(successHandler)
 					.failureUrl("/login/form?error").and().httpBasic().disable().logout().invalidateHttpSession(true)

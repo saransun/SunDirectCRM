@@ -8,7 +8,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.sundirect.crm.bean.Asset;
 import com.sundirect.crm.bean.OrderCreation;
 import com.sundirect.crm.bean.OrderCreationAPI;
 import com.sundirect.crm.controller.APIController;
@@ -53,6 +56,9 @@ public class APIServiceImpl implements APIService{
 	@Value("${API.sms.allSubscription}")
 	private String allSubscription;
 	
+	@Value("${API.info.plan}")
+	private String sdPlan;
+	
 	/*
 	 * @Autowired SHACheckSum checkSum;
 	 */
@@ -64,6 +70,13 @@ public class APIServiceImpl implements APIService{
 	
 	@Value("${API.info.key}")
 	private String key;
+	
+	@Value("${API.sms.allAssetDetails}")
+	private String allAssetDetails;
+	
+	@Value("${API.sms.allAssetByType}")
+	private String allAssetByType;
+	
 	@Override
 	public String getAllPlanAPI(String status) {
 		
@@ -91,10 +104,10 @@ public class APIServiceImpl implements APIService{
 				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 				String line = null;
 				while ((line = br.readLine()) != null) {
-					sb.append(line + "\n");
+					sb.append(line.trim());
 				}
 				br.close();
-				log.info("response" + sb.toString());
+				//log.info("response" + sb.toString());
 				resp = sb.toString();
 				return resp;
 			} else {
@@ -350,9 +363,270 @@ public class APIServiceImpl implements APIService{
 			}
 		}
 	}
+
+	@Override
+	public String getAllSDPlan() {
+		HttpURLConnection connection = null;
+		String resp;
+		String result;
+		try {
+			String path=apiUrl+sdPlan;
+			log.info("All plan Url Path: {}",path);
+			URL url= new URL(path);			
+			connection=(HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
+			///connection.setDoOutput(true);
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			log.info("content-type " + connection.getContentType());
+
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line.trim());
+				}
+				br.close();
+				//log.info("response" + sb.toString());
+				resp = sb.toString();
+				return resp;
+			} else {
+				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				resp = connection.getResponseMessage();
+				return resp;
+			}
+			
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			log.error("exception in notification with message {} for ", e.getMessage());
+			return null;
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
 	
 	
+	@Override
+	public String getOtherInfo(String info,Integer keyVal,String param,String startDate, String endDate) {
+		HttpURLConnection connection = null;
+		String resp;
+		String result;
+		try {
+			//String path=apiUrl+apiEndPoint+"?"+key+"="+keyVal+"&"+param+"="+info+"&"+
+			//					"start_date"+"="+startDate+"&"+"end_date"+"="+endDate;
+			String path=apiUrl+apiEndPoint+"?"+"start_date"+"="+startDate+"&"+"end_date"+"="+endDate+"&"+param+"="+info+"&"+key+"="+keyVal;
+			log.info("All plan Url Path: {}",path);
+			URL url= new URL(path);			
+			connection=(HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
+			///connection.setDoOutput(true);
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			log.info("content-type " + connection.getContentType());
+
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line.trim());
+				}
+				br.close();
+				//log.info("response" + sb.toString());
+				resp = sb.toString();
+				return resp;
+			} else {
+				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				resp = connection.getResponseMessage();
+				return resp;
+			}
+			
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			log.error("exception in notification with message {} for ", e.getMessage());
+			return null;
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
 	
+	@Override
+	public String getAllAssetDetails(List<String> assets) {
+		
+		HttpURLConnection connection = null;
+		String resp;
+		String result;
+		try {
+			String paramString = assets.stream().collect(Collectors.joining(","));
+			log.info("param value: {}",paramString);
+			
+			String path=smsPath+allAssetDetails+"?assetIds="+paramString;
+			log.info("All plan Url Path: {}",path);
+			URL url= new URL(path);			
+			connection=(HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
+			///connection.setDoOutput(true);
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			log.info("content-type " + connection.getContentType());
+
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line.trim());
+				}
+				br.close();
+				//log.info("response" + sb.toString());
+				resp = sb.toString();
+				return resp;
+			} else {
+				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				resp = connection.getResponseMessage();
+				return resp;
+			}
+			
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			log.error("exception in notification with message {} for ", e.getMessage());
+			return null;
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+		
+	}
+
+	@Override
+	public String getAllLiveAsset() {
+		// TODO Auto-generated method stub
+		HttpURLConnection connection = null;
+		String resp;
+		String result;
+		try {
+					
+			String path=smsPath+allAssetByType+"?type="+"live";
+			log.info("All plan Url Path: {}",path);
+			URL url= new URL(path);			
+			connection=(HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
+			///connection.setDoOutput(true);
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			log.info("content-type " + connection.getContentType());
+
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line.trim());
+				}
+				br.close();
+				//log.info("response" + sb.toString());
+				resp = sb.toString();
+				return resp;
+			} else {
+				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				resp = connection.getResponseMessage();
+				return resp;
+			}
+			
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			log.error("exception in notification with message {} for ", e.getMessage());
+			return null;
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+		
+	}
+	
+	
+	@Override
+	public String getAllDetailBasedAsset(String contentId) {
+		// TODO Auto-generated method stub
+		HttpURLConnection connection = null;
+		String resp;
+		String result;
+		try {
+					
+			String path=apiUrl+apiEndPoint+"?"+key+"="+"1"+"&"+"content_id"+"="+contentId;
+			log.info("All plan Url Path: {}",path);
+			URL url= new URL(path);			
+			connection=(HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
+			///connection.setDoOutput(true);
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			log.info("content-type " + connection.getContentType());
+
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line.trim());
+				}
+				br.close();
+				resp = sb.toString();
+				return resp;
+			} else {
+				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				resp = connection.getResponseMessage();
+				return resp;
+			}
+			
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			log.error("exception in notification with message {} for ", e.getMessage());
+			return null;
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+		
+	}
 	
 
 }

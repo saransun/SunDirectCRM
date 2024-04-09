@@ -1,5 +1,10 @@
 package com.sundirect.crm.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -14,10 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sundirect.crm.bean.OrderCreation;
 import com.sundirect.crm.bean.OrderCreationAPI;
+import com.sundirect.crm.bean.Plan;
+import com.sundirect.crm.bean.SDPlan;
+import com.sundirect.crm.bean.UserInfo;
 import com.sundirect.crm.service.APIService;
 import com.sundirect.crm.utils.ApiReturn;
 
@@ -27,16 +36,49 @@ public class APIController {
 	@Autowired
 	APIService apiservice;
 	
-	@GetMapping(value = "/api/Allplans")
-	public JsonNode getAllPlan(@RequestParam(name = "status") String status,HttpServletRequest request) {			
-		
-		try {
+	@GetMapping(value = "/api/AllplansAPI")
+	public List<SDPlan> getAllPlan(@RequestParam(name = "status") String status,HttpServletRequest request) {			
+		log.info("coming inside allplan");
+		try {		
 			String returnVal=apiservice.getAllPlanAPI(status);
+			JSONObject jsonObj2=new JSONObject(returnVal);				
+			String responseFinal2=jsonObj2.getString("results");
+			 List<Plan> smsplanList=new ArrayList<Plan>();
+			try {
+				log.info("test: {}",returnVal.trim());				
+	            ObjectMapper mapper = new ObjectMapper();
+	            smsplanList = mapper.readValue(responseFinal2, new TypeReference<List<Plan>>(){});		            
+	            //log.info("checking userInfo.....{}",smsplanList.get(0).getAction());
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+			
+			String sdPlan=apiservice.getAllSDPlan();
+			JSONObject jsonObj=new JSONObject(sdPlan);				
+			String responseFinal=jsonObj.getString("results");
+			List<SDPlan> planList=new ArrayList<SDPlan>();
+			try {
+				//log.info("test: {}",sdPlan.trim());				
+	            ObjectMapper mapper = new ObjectMapper();
+	            planList = mapper.readValue(responseFinal, new TypeReference<List<SDPlan>>(){});		            
+	            log.info("checking userInfo 1.....{}",planList.get(0).getFields().getPlan_description());
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+			
+			log.info("SD plan list size: {} sms plan list size: {}",planList.size(),smsplanList.size());
+			final List<Plan> smsFinalList=smsplanList;
+			List<SDPlan> finalList= new ArrayList<SDPlan>();
+			finalList = planList.stream()
+	                .filter(obj1 -> smsFinalList.stream().anyMatch(obj2 -> obj2.getPlanId() == obj1.getFields().getSmsPlanId()))
+	                .collect(Collectors.toList());
+			
 		//	JSONObject jsonObj=new JSONObject(returnVal);			
 			ObjectMapper objectMapper=new ObjectMapper();        
 			JsonNode jsonNode= objectMapper.readTree(returnVal);
-			log.info("json string: {}",jsonNode.toString());
-			return jsonNode;
+			//log.info("json string: {}",jsonNode.toString());
+			log.info("SD plan list final size: {}",finalList.size());
+			return finalList;
 			
 		}catch (Exception e) {
 			e.printStackTrace();
