@@ -68,10 +68,15 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 						th:src="@{/images/subscribers_menu.png}" /><span
 						class="nav-label">Subscriber</span></a></li>
 						<li
-					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'subscriber') ? 'active':''}"><a
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'plan') ? 'active':''}"><a
 					th:href="@{|/api/Allplans?status=Active|}"><img
 						th:src="@{/images/subscribers_menu.png}" /><span
 						class="nav-label">All Plans</span></a></li>
+						<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'live') ? 'active':''}"><a
+					th:href="@{|/getAllLiveTv|}"><img
+						th:src="@{/images/subscribers_menu.png}" /><span
+						class="nav-label">Live Channel</span></a></li>
 						
 
 		<!-- -			<li

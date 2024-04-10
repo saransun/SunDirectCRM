@@ -3,12 +3,18 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layoutLogged">
 <head>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
-    <link type="text/css" rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.css"/>
+   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscriber - CRM</title>
+    
 </head>
 
 <body>
@@ -100,9 +106,10 @@
                                             onclick="otherInfo(this.getAttribute('data-userid'))"
                                             type="button">Other Info
                                     </button>
-                                    <button style="margin: 0 600px;" class="btn btn-info" data-toggle="modal"
-                                            data-target='#createPlan' type="button">Create Plan
-                                    </button>
+                                   <div th:if="${showButtom}">
+<button style="margin: 0 550px;" class="btn btn-info" data-toggle="modal"
+                                            data-target='#createPlan' type="button">Add subscription
+</button></div>
                                 </div>
                             </div>
                         </div>
@@ -177,41 +184,39 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="subscriptionLabel">Subscription Information</h5>
+                <h5 class="modal-title" id="subscriptionLabel">Subscription</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" style="background-color: white;">
-                <form id="subscriptionForm">
-                    <input type="hidden" value="create" class="form-control" name="action">
-                    
-                    <div class="form-group" ">
-    <label for="">Plan Name</label>
-
-
-<!-- Select dropdown -->
-<select class="form-control searchType" aria-invalid="false" name="packageIds">
-   <option value="">Select</option>
-        <!-- Loop through the JSON array and dynamically generate options -->
-        <option th:each="plan : ${finalList}" th:value="${plan.fields.sdPlanId}" th:text="${plan.fields.plan_name}"></option>
-    <!-- Loop through the JSON array and dynamically generate options -->
+               <form id="subscriptionForm">
+    <input type="hidden" value="create" class="form-control" name="action">
     
+    <div class="form-group">
+        <label for="planName">Plan Name</label>
+        <!-- Select dropdown -->
+       <select class="form-control" aria-invalid="false" name="packageIds" id="packageIds" required=true>
+       <option value="">Select</option>
+   
+    <!-- Loop through the JSON array and dynamically generate options  -->
+    <option th:each="plan : ${finalList}" th:value="${plan.fields.sdPlanId}" th:text="${plan.fields.plan_name}"></option>
 </select>
-</div>
+    </div>
+    
+    <!-- User information -->
+    <div th:each="user : ${user}">
+        <div class="form-group">
+            <label for="smc">SMC</label>
+            <input readonly th:value="${user.fields.smc}" type="text" class="form-control" id="smc" name="smc">
+        </div>
+        <div class="form-group">
+            <label for="mobileNo">Mobile No</label>
+            <input readonly th:value="${user.fields.mobileNo}" type="text" class="form-control" id="mobileNo" name="mobileNo">
+        </div>
+    </div>
+</form>
 
-                    
-                    <div th:each="user : ${user}">
-                        <div class="form-group">
-                            <label for="smc">SMC</label>
-                            <input th:value="${user.fields.smc}" type="text" class="form-control" id="smc" name="smc">
-                        </div>
-                        <div class="form-group">
-                            <label for="mobileNo">Mobile No</label>
-                            <input th:value="${user.fields.mobileNo}"  type="text" class="form-control" id="mobileNo" name="mobileNo">
-                        </div>
-                    </div>
-                </form>
             </div>
             <div class="modal-footer" style="background-color: white;">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -452,7 +457,7 @@ function updateDeviceTable(table, planData) {
         cell.textContent =plan.device.fields.os_version ;
         } else {
             var cell = row.insertCell(0);
-            cell.textContent =plan.message1;
+            cell.textContent =plan.message;
            
         }
         
@@ -565,15 +570,20 @@ function updateOtherTable(table, planData) {
             return response.json();
         })
         .then(data => {
+        	if(data.code==200){
         	$('#createPlan').modal('hide');
             // Handle success
             console.log('Success:', data);
-            swal("Success!", "Form submitted successfully", "success");
+            swal("Success!", "Subscription provided successfully", "success");
+        	}else{
+        		swal("Failed!", "something went wrong", "error");
+        		
+        	}
             // You can show a success message or perform any other action
         })
         .catch(error => {
         	$('#createPlan').modal('hide');
-        	 swal("Failed!", "Form submitted successfully", "error");
+        	 swal("Failed!", "something went wrong", "error");
             // Handle errors
             console.error('Error:', error);
             // You can show an error message or perform any other action
@@ -581,7 +591,7 @@ function updateOtherTable(table, planData) {
     }
 </script>
 <script>
-function eventData(){
+function eventData1(){
 
 	// Get the input element
 	var fromDateInput = document.getElementById('_planFromDate');
@@ -597,28 +607,24 @@ function eventData(){
 
 }
 </script>
-
-<script>
-    $(document).ready(function () {
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
         $('.searchType').select2({
-            placeholder: "Select option",
-            allowClear: true,
-            width: '100%'
-        });
-
-        $('#_apiPropFromDate').datepicker({
-            dateFormat: 'yy-mm-dd',
-            changeYear: true,
-            changeMonth: true
-        });
-
-        $('#_apiPropToDate').datepicker({
-            dateFormat: 'yy-mm-dd',
-            changeYear: true,
-            changeMonth: true
+            placeholder: 'Search for an option',
+            allowClear: true // Optional, adds a clear button
         });
     });
 </script>
+ <script type="text/javascript">
+ jQuery(document).ready(function($) {
+        $('#packageIds1').select2({
+            placeholder: 'Search for a package',
+            allowClear: true // Optional, adds a clear button
+        });
+    });
+</script>
+
+
 <style>
 .green-button {
     background-color: green;
@@ -635,16 +641,17 @@ function eventData(){
     border-radius: 5px; /* Optional: Add rounded corners */
 }
 
+
 </style>
+
 
 </section>
 
 <div layout:fragment="customscripts">
     <!-- Your custom scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+   
+
+
 </div>
 
 

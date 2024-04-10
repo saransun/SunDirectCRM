@@ -132,7 +132,7 @@
                 $('#planTable').DataTable();
             });
            function allPlan(){
-        	   
+        	   var filterType = $("#filterButtons .active input[name='_cfilter']").val();
         	   window.location.href = '/api/Allplans?status=All';
            }
 function activePlan(){
@@ -202,7 +202,11 @@ function getBundle(planData) {
 
 
         </script>
-        
+       <style>
+    .dataTables_info {
+        display: none;
+    }
+</style> 
     </div>
 </body>
 </html>
