@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -82,10 +84,22 @@ public class SMSController {
 	@GetMapping(value = "/sms/subscriber/info")
 	public String customerInfo(Model model, @RequestParam(value = "query", required = true) Optional<String> query,
 			@RequestParam(value = "requestType") Optional<String> requestType) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getAuthorities().stream()
+		        .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+			//log.info("say yess...................");
+			model.addAttribute("showButtom", true);
+			
+		}else {
+			//log.info("say noooooooo...................");
+			model.addAttribute("showButtom", false);
+		}
+		
 		Integer userId = 0;
 		String param = "";
 		if (query.isPresent() && requestType.isPresent() && !query.get().isEmpty()) {
-			log.info("Entering into impl=====22222");
+			//log.info("Entering into impl=====22222");
 			String inp = "";
 			if (requestType.get().equalsIgnoreCase("UserID")) {
 				inp = String.valueOf(query.get());
@@ -103,7 +117,7 @@ public class SMSController {
 				String responseFinal = jsonObj.getString("user_info");
 				List<UserInfo> userInfoList = new ArrayList<UserInfo>();
 				try {
-					log.info("test: {}", resp.trim());
+					//log.info("test: {}", resp.trim());
 
 					ObjectMapper mapper = new ObjectMapper();
 					userInfoList = mapper.readValue(responseFinal, new TypeReference<List<UserInfo>>() {
@@ -135,7 +149,7 @@ public class SMSController {
 			String responseFinal2 = jsonObj2.getString("results");
 			List<Plan> smsplanList = new ArrayList<Plan>();
 			try {
-				log.info("test: {}", returnVal.trim());
+				//log.info("test: {}", returnVal.trim());
 				ObjectMapper mapper = new ObjectMapper();
 				smsplanList = mapper.readValue(responseFinal2, new TypeReference<List<Plan>>() {
 				});
@@ -158,7 +172,7 @@ public class SMSController {
 				e.printStackTrace();
 			}
 
-			log.info("SD plan list size: {} sms plan list size: {}", planList.size(), smsplanList.size());
+			//log.info("SD plan list size: {} sms plan list size: {}", planList.size(), smsplanList.size());
 			final List<Plan> smsFinalList = smsplanList;
 			List<SDPlan> finalList = new ArrayList<SDPlan>();
 			finalList = planList.stream().filter(
@@ -169,7 +183,7 @@ public class SMSController {
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode jsonNode = objectMapper.readTree(returnVal);
 			// log.info("json string: {}",jsonNode.toString());
-			log.info("SD plan list final size: {}", finalList.size());
+			//log.info("SD plan list final size: {}", finalList.size());
 			// return finalList;
 			model.addAttribute("finalList", finalList);
 
@@ -191,7 +205,7 @@ public class SMSController {
 			String responseFinal = jsonObj.getString("device_info");
 			List<DeviceInfo> deviceInfoList = new ArrayList<DeviceInfo>();
 			try {
-				log.info("test: {}", resp.trim());
+				//log.info("test: {}", resp.trim());
 
 				ObjectMapper mapper = new ObjectMapper();
 				deviceInfoList = mapper.readValue(responseFinal, new TypeReference<List<DeviceInfo>>() {
@@ -311,12 +325,12 @@ public class SMSController {
 			List<String> assetList = eventList.stream().map(p -> p.getFields().getContentId())
 					.collect(Collectors.toList());
 			String assetResp = apiService.getAllAssetDetails(assetList);
-			log.info("Asset Resp: {}", assetResp);
+			//log.info("Asset Resp: {}", assetResp);
 			JSONObject assetjson = new JSONObject(assetResp);
 			String assetResponse = assetjson.getString("results");
 			List<Asset> assetInfoList = new ArrayList<Asset>();
 			try {
-				log.info("test: {}", resp.trim());
+				//log.info("test: {}", resp.trim());
 
 				ObjectMapper mapper1 = new ObjectMapper();
 				assetInfoList = mapper1.readValue(assetResponse, new TypeReference<List<Asset>>() {
@@ -327,7 +341,7 @@ public class SMSController {
 			}
 			for (PlayerEvent p : eventList) {
 				MapObject mapObject = new MapObject();
-				log.info("Last 7 days Event List");
+				//log.info("Last 7 days Event List");
 				Asset assetVal = new Asset();
 				/*
 				 * for(Asset asset:assetInfoList) {
@@ -365,30 +379,40 @@ public class SMSController {
 	public String getAllLiveTv(Model model, @RequestParam(value = "contentId", required = false) String contentId) {
 
 		try {
-			
 			if(null==contentId || contentId.isEmpty()) {
 			List<Asset> assetInfoList = new ArrayList<Asset>();
 			String assetResp = apiService.getAllLiveAsset();
-			log.info("Asset Resp: {}", assetResp);
+			//log.info("Asset Resp: {}", assetResp);
 			JSONObject assetjson = new JSONObject(assetResp);
 			String assetResponse = assetjson.getString("results");
 			
-			log.info("test: {}", assetResp.trim());
+			//log.info("test: {}", assetResp.trim());
 
 			ObjectMapper mapper1 = new ObjectMapper();
 			assetInfoList = mapper1.readValue(assetResponse, new TypeReference<List<Asset>>() {});
 			log.info("asset info.....{}", assetInfoList.get(0).getName());		
 			model.addAttribute("assetInfoList", assetInfoList);
 			}else {
-			
+				List<Asset> assetInfoList = new ArrayList<Asset>();
+				String assetResp = apiService.getAllLiveAsset();
+				//log.info("Asset Resp: {}", assetResp);
+				JSONObject assetjson = new JSONObject(assetResp);
+				String assetResponse = assetjson.getString("results");
+				
+				//log.info("test: {}", assetResp.trim());
+
+				ObjectMapper mapper1 = new ObjectMapper();
+				assetInfoList = mapper1.readValue(assetResponse, new TypeReference<List<Asset>>() {});
+				log.info("asset info.....{}", assetInfoList.get(0).getName());		
+				model.addAttribute("assetInfoList", assetInfoList);
 			String contentResp=apiService.getAllDetailBasedAsset(contentId);
-			log.info("Content Resp: {}", contentResp);
+			//log.info("Content Resp: {}", contentResp);
 			JSONObject contentjson = new JSONObject(contentResp);
 			String contentResponse = contentjson.getString("content_status");
-			ObjectMapper mapper1 = new ObjectMapper();
+			//ObjectMapper mapper1 = new ObjectMapper();
 			List<PlayerEvent> contentInfoList = new ArrayList<PlayerEvent>();
 			contentInfoList = mapper1.readValue(contentResponse, new TypeReference<List<PlayerEvent>>() {});
-			log.info("content info.....{}", contentInfoList.toString());
+			//log.info("content info.....{}", contentInfoList.toString());
 			long count=contentInfoList.stream().map(PlayerEvent::getFields).map(Fields::getUserId).distinct().count();	
 			log.info("Distinct user: {} and listSzie: {}",count,contentInfoList.size());
 			model.addAttribute("contentInfoList",contentInfoList);	
@@ -410,10 +434,10 @@ public class SMSController {
 
 	@GetMapping("/login/form")
 	public String login(Model model) {
-		log.info("model from /login/form" + model);
+		//log.info("model from /login/form" + model);
 		AppUser user = appUserService.getCurrentUser();
 		if (null == user) {
-			log.info("user" + user);
+			//log.info("user" + user);
 			model.addAttribute("version", version);
 			return "login";
 		}

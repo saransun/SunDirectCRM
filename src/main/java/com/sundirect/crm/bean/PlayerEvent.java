@@ -84,16 +84,7 @@ public class PlayerEvent {
 		public void setModifiedAt(Date modifiedAt) {
 			this.modifiedAt = modifiedAt;
 		}
-		@Override
-		public String toString() {
-			return "Fields [userId=" + userId + ", contentId=" + contentId + ", deviceId=" + deviceId + ", action="
-					+ action + ", elapsedTime=" + elapsedTime + ", totalDuration=" + totalDuration + ", streamName="
-					+ streamName + ", createdAt=" + createdAt + ", modifiedAt=" + modifiedAt + "]";
-		}
-		
-		
-
-       
+		       
     }
 
 	public String getModel() {
@@ -126,13 +117,6 @@ public class PlayerEvent {
 
 	public void setDevice(List<DeviceInfo> device) {
 		this.device = device;
-	}
-
-	@Override
-	public String toString() {
-		return "PlayerEvent [model=" + model + ", pk=" + pk + ", fields=" + fields + ", device=" + device + "]";
-	}
-	
-	
+	}	
 	
 }

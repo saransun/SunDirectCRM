@@ -24,14 +24,8 @@ public class UserLoginService {
 	public List<Login> userLoginDetails(){
 		try {
 			
-			log.info("userInfo: {}",userInfo);
             ObjectMapper mapper = new ObjectMapper();
-            List<Login> userList = mapper.readValue(userInfo, new TypeReference<List<Login>>(){});
-
-            for (Login user : userList) {
-                System.out.println(user.getUsername());
-            }
-            
+            List<Login> userList = mapper.readValue(userInfo, new TypeReference<List<Login>>(){});           
             return userList;
         } catch (IOException e) {
             e.printStackTrace();

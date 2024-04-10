@@ -47,7 +47,7 @@ public class AppUserServiceImpl implements AppUserService {
 			}
 		}
 		//Login user = userRepo.findByUsername(username);
-		log.info("user.............." + user.getTenantName() + "::" + user.getUsername() + "::" + user.getRole().toString());
+		//log.info("user.............." + user.getTenantName() + "::" + user.getUsername() + "::" + user.getRole().toString());
 		Set<GrantedAuthority> grantAuth = new HashSet<>();
 		grantAuth.add(new SimpleGrantedAuthority(user.getRole()));
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
@@ -94,12 +94,12 @@ public class AppUserServiceImpl implements AppUserService {
 
 	@Override
 	public AppUser findUsername(String username) {
-		log.info("Inside findUsername: "+username);
+		//log.info("Inside findUsername: "+username);
 		if(null == username)	
 		return null;
 		List<Login> userList=new ArrayList<Login>();
 		userList=userLoginService.userLoginDetails();
-		log.info("Inside findUsername list size: "+userList.size());
+		//log.info("Inside findUsername list size: "+userList.size());
 		for(Login login:userList) {
 			if(login.getUsername().equals(username)) {
 				return getModelFromEntity(login);
@@ -107,9 +107,6 @@ public class AppUserServiceImpl implements AppUserService {
 		}
 		
 		return null;
-		/*
-		 * if(null != user) return getModelFromEntity(user); return null;
-		 */
 	}
 
 	@Override
@@ -118,19 +115,15 @@ public class AppUserServiceImpl implements AppUserService {
 		SecurityContext ctx = SecurityContextHolder.getContext();
 		Authentication auth = ctx.getAuthentication();
 		if (auth != null) {
-			log.info("auth name: {}",auth.getName());
+			//log.info("auth name: {}",auth.getName());
 			String userName = auth.getName();
 			//String userName ="Sun Direct";
 			try {
-			log.info("checking;;;;;;;;;;;;;;;;;;"+userName);
+			//log.info("checking;;;;;;;;;;;;;;;;;;"+userName);
 			appUser = findUsername(userName);
-			
-			//log.info("auth name: {}",auth.getName());
-			//log.info("role name: {}",appUser.getRoles());
 			return appUser;
 			}
 			catch (Exception e) {
-				// TODO: handle exception
 				return null;
 			}
 		}
