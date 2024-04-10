@@ -58,10 +58,7 @@ public class APIServiceImpl implements APIService{
 	
 	@Value("${API.info.plan}")
 	private String sdPlan;
-	
-	/*
-	 * @Autowired SHACheckSum checkSum;
-	 */
+
 	@Value("${API.info.uri}")
 	private String apiUrl;
 	
@@ -92,7 +89,6 @@ public class APIServiceImpl implements APIService{
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
-			///connection.setDoOutput(true);
 			connection.connect();
 			StringBuilder sb = new StringBuilder();
 			int responseCode = connection.getResponseCode();
@@ -178,14 +174,13 @@ public class APIServiceImpl implements APIService{
 			return resp;
 		}
 		catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+			log.info(e.getMessage());
 		}finally {
 			if (connection != null) {
 				connection.disconnect();
 			}
-		}
-		
-		
+		}		
 		return null;
 	}
 	
@@ -215,8 +210,7 @@ public class APIServiceImpl implements APIService{
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("X-myplex-signature",value );
-			connection.setRequestProperty("X-myplex-partnerid", "SUNDIRECT");
-			
+			connection.setRequestProperty("X-myplex-partnerid", "SUNDIRECT");			
 			connection.setRequestProperty("X-myplex-timestamp", key);
 			connection.setRequestProperty("X-myplex-platform", "WEB_CLIENT");
 			connection.setRequestProperty("X-forwarded-for", ipAddress);
@@ -255,7 +249,8 @@ public class APIServiceImpl implements APIService{
 			return resp;
 		}
 		catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+			log.info(e.getMessage());
 		}finally {
 			if (connection != null) {
 				connection.disconnect();
@@ -327,8 +322,6 @@ public class APIServiceImpl implements APIService{
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
-			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
-			///connection.setDoOutput(true);
 			connection.connect();
 			StringBuilder sb = new StringBuilder();
 			int responseCode = connection.getResponseCode();
@@ -377,8 +370,6 @@ public class APIServiceImpl implements APIService{
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
-			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
-			///connection.setDoOutput(true);
 			connection.connect();
 			StringBuilder sb = new StringBuilder();
 			int responseCode = connection.getResponseCode();
@@ -430,8 +421,6 @@ public class APIServiceImpl implements APIService{
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
-			//connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
-			///connection.setDoOutput(true);
 			connection.connect();
 			StringBuilder sb = new StringBuilder();
 			int responseCode = connection.getResponseCode();
@@ -485,7 +474,6 @@ public class APIServiceImpl implements APIService{
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("X-MYPLEX-TENANT-ID",tenant );
-			///connection.setDoOutput(true);
 			connection.connect();
 			StringBuilder sb = new StringBuilder();
 			int responseCode = connection.getResponseCode();
@@ -524,7 +512,6 @@ public class APIServiceImpl implements APIService{
 
 	@Override
 	public String getAllLiveAsset() {
-		// TODO Auto-generated method stub
 		HttpURLConnection connection = null;
 		String resp;
 		String result;
