@@ -203,7 +203,7 @@ public class APIServiceImpl implements APIService{
 				value=map.get(key);
 			}
 			log.info("timestamp: {} hash: {}",key,value);
-			
+			log.info("smc: {} mobile: {} planId: {} action: {}",model.getSmc(),model.getMobileNo(),model.getPackageIds(),model.getAction());
 			URL url = new URL(path);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");

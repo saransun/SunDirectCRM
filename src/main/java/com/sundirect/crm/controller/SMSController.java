@@ -157,7 +157,26 @@ public class SMSController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			
+			String returnValClosed = apiService.getAllPlanAPI("Closed");
+			JSONObject jsonObj2Closed = new JSONObject(returnValClosed);
+			String responseFinal2Closed = jsonObj2Closed.getString("results");
+			List<Plan> smsplanListClosed = new ArrayList<Plan>();
+			try {
+				log.info("test: {}", returnValClosed.trim());
+				ObjectMapper mapper = new ObjectMapper();
+				smsplanListClosed = mapper.readValue(responseFinal2Closed, new TypeReference<List<Plan>>() {
+				});
+				// log.info("checking userInfo.....{}",smsplanList.get(0).getAction());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			log.info("checking userInfo closed before.....{}",smsplanListClosed.size());
+			log.info("checking userInfo before.....{}",smsplanList.size());
+			for(Plan pl:smsplanListClosed) {
+				smsplanList.add(pl);
+			}			
+			log.info("checking userInfo after.....{}",smsplanList.size());
 			String sdPlan = apiService.getAllSDPlan();
 			JSONObject jsonObj = new JSONObject(sdPlan);
 			String responseFinal = jsonObj.getString("results");
