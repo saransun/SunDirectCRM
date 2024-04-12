@@ -27,6 +27,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -44,6 +46,7 @@ import com.sundirect.crm.bean.PlayerEvent;
 import com.sundirect.crm.bean.PlayerEvent.Fields;
 import com.sundirect.crm.bean.SDPlan;
 import com.sundirect.crm.bean.UserInfo;
+import com.sundirect.crm.bean.UserSignUp;
 import com.sundirect.crm.config.AppUserService;
 import com.sundirect.crm.service.APIService;
 import com.sundirect.crm.service.SubscriberService;
@@ -461,5 +464,13 @@ public class SMSController {
 			return "login";
 		}
 		return "redirect:/";
+	}
+	
+	@PostMapping(value="/sms/signup", consumes = "application/json")
+	public String signUp(@RequestBody UserSignUp user) {		
+		
+		String resp=appUserService.userSignUp(user);
+				
+		return resp;		
 	}
 }

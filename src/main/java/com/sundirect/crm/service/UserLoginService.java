@@ -1,5 +1,7 @@
 package com.sundirect.crm.service;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,19 +20,44 @@ public class UserLoginService {
 	
 	private static final Logger log = LoggerFactory.getLogger(UserLoginService.class);
 
-	@Value("${user.info.type}")
-	private String userInfo;
+	/*
+	 * @Value("${user.info.type}") private String userInfo;
+	 */
+	
+	@Value("${user.info.file}")
+	private String file;
 	
 	public List<Login> userLoginDetails(){
-		try {
-			
+		try {			
             ObjectMapper mapper = new ObjectMapper();
-            List<Login> userList = mapper.readValue(userInfo, new TypeReference<List<Login>>(){});           
+            String userDetails=mapper.writeValueAsString(mapper.readTree(new File(file)));            
+            List<Login> userList = mapper.readValue(userDetails, new TypeReference<List<Login>>(){});           
             return userList;
         } catch (IOException e) {
             e.printStackTrace();
         }
 		return null;
 		
+	}
+	
+	public String userSignUp(String details,String fileName,String prev) {
+		
+		try{
+		String out=prev.replace("]", "")+","+details+"]";
+		try(FileWriter writer= new FileWriter(fileName)){
+			writer.write(out);
+			log.info("user sign up success");
+			return "success";
+		}
+		catch (Exception e) {
+			log.info("Failed due to Exception {}",e.getMessage());
+			e.printStackTrace();
+			return "failed";
+		}
+		}
+		catch (Exception e) {log.info("Failed due to Exception {}",e.getMessage());
+		e.printStackTrace();
+		return "failed";
+		}		
 	}
 }
