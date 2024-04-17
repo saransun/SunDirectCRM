@@ -75,6 +75,7 @@ public class SMSController {
 			JsonNode jsonNode = objectMapper.readTree(returnVal);
 			log.info("json string: {}", jsonNode.toString());
 			model.addAttribute("planValue", jsonNode);
+			model.addAttribute("selectedFilter", status);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -397,7 +398,7 @@ public class SMSController {
 		return modelmap;
 	}
 
-	@GetMapping("/getAllLiveTv")
+	@GetMapping("/sms/getAllLiveTv")
 	public String getAllLiveTv(Model model, @RequestParam(value = "contentId", required = false) String contentId) {
 
 		try {
