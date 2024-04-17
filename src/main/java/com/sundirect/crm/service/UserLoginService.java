@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +44,14 @@ public class UserLoginService {
 	public String userSignUp(String details,String fileName,String prev) {
 		
 		try{
-		String out=prev.replace("]", "")+","+details+"]";
+		JSONObject json=new JSONObject(details);	
+		String userName=json.getString("name");
+		log.info("userName: {}",userName);		
+		if(prev.contains(userName)) {
+			log.info("user already available");
+			return "user already exist";
+		}			
+		String out=prev.replace("]", "")+","+details+"]";		
 		try(FileWriter writer= new FileWriter(fileName)){
 			writer.write(out);
 			log.info("user sign up success");
