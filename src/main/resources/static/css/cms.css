@@ -282,7 +282,7 @@
 }
 
 .modal-header {
-	background-color: #1ab394;
+	background-color: #6495ED;
 	padding: 10px;
 	color: #ffffff;
 }
@@ -1725,8 +1725,8 @@ sup {
 
 #filterButtons .btn-white.active {
 	color: #fff;
-	border: 1px solid #1ab394;
-	background-color: #1ab394;
+	border: 1px solid #6495ED;
+	background-color: #6495ED;
 }
 
 #filterButtons .btn-white.active.focus {
