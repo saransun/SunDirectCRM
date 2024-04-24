@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layoutLogged">
 <head>
-   
+  
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 
     <!-- Include jQuery -->
@@ -16,7 +16,31 @@
     <title>Subscriber - CRM</title>
     
 	<style>
-    
+    /* CSS */
+.button-33 {
+  background-color:#6495ED;
+  border-radius: 50px;
+  box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;
+  color:white;
+  cursor: pointer;
+  display: inline-block;
+  font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
+  padding: 7px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 250ms;
+  border: 0;
+  font-size: 14px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+   white-space: nowrap;
+}
+
+.button-33:click {
+  box-shadow: rgba(44,187,99,.35) 0 -25px 18px -14px inset,rgba(44,187,99,.25) 0 1px 2px,rgba(44,187,99,.25) 0 2px 4px,rgba(44,187,99,.25) 0 4px 8px,rgba(44,187,99,.25) 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
+  transform: scale(1.05) rotate(-1deg);
+}
        .clearable-input {
   position: relative;
 }
@@ -55,12 +79,14 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>View Subscribers</h5>
+                    <div class="ibox-title" style="
+    background-color: #D6EAF8 ;">
+                        <h5>Subscriber Information </h5>
                         <form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get"
                               target="_blank">
-                            <a style="color: #E74C3C; font-weight: bold; margin-left: 50px; text-decoration: underline;"
-                               href="#" onclick="document.getElementById('myForm').submit()">Crash reports</a>
+                             <!-- Add this line before or after your button -->
+                            <button style="color:white; font-weight: bold; margin-left: 50px; background-color:#6495ED; border-radius: 30px; border: #6495ED;"
+                               href="#" onclick="document.getElementById('myForm').submit()" >   <img th:src="@{/images/firebase.png}"alt="Image Description" style="width:30px;background:transparent;" >Crash reports</button>
                         </form>
                         <div class="ibox-tools">
                             <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -70,11 +96,12 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="ibox-content">
+                    <div class="ibox-content"  style="
+    background-color: #D6EAF8 ;">
                         <div class="search_bar">
                             <form id="searchForm" class="navbar-form" role="search">
                                 <div class="col-sm-6">
-                                    <select class="form-control carousel-search-select valid searchType"
+                                    <select class="form-control carousel-search-select valid searchType1"
                                             id="searchType2" aria-invalid="false" name="requestType"
                                             th:object="${filter}">
                                         <option value="">Select</option>
@@ -86,7 +113,7 @@
                                     </select>
                                 </div>
                                 <div class="input-group clearable-input col-sm-6">
-                                    <input type="text" class="form-control" placeholder="Search"
+                                    <input type="search" class="form-control" placeholder="Search"
                                            id="query" name="query" th:value="${query}">
                                     <span data-clear-input>&times;</span>
                                     <div class="input-group-btn">
@@ -98,7 +125,7 @@
                             </form>
                         </div>
                         <div th:if="${user != null}" id="userDetails">
-                            <h2 style="color: #6495ED; font-weight: bold; text-decoration: underline;">User Details:</h2>
+                           
                             <div th:each="user : ${user}">
                                 <dl class="user-details-list">
                                     <div class="row">
@@ -116,23 +143,24 @@
                                 </dl>
                                 <br/>
                                 <div style="display: flex; margin-bottom: 10px;">
-                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
-                                            th:attr="data-target='#subscription', data-userid=${user.id}"
-                                            onclick="subscriptionInfo(this.getAttribute('data-userid'))"
+                                    <button style="margin: 0 3px;" class=" button-33" data-toggle="modal"
+                                            th:attr="data-target='#subscription', data-userid=${user.id},data-smcNo=${user.fields.smc},data-mobileNo=${user.fields.mobileNo},data-show=${showButtom}"
+                                            onclick="subscriptionInfo(this.getAttribute('data-userid'),this.getAttribute('data-smcNo'),this.getAttribute('data-mobileNo'),this.getAttribute('data-show'))"
                                             type="button">Subscription Info
                                     </button>
-                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                    <button style="margin: 0 3px;" class=" button-33" data-toggle="modal"
                                             th:attr="data-target='#device', data-userid=${user.id}"
                                             onclick="deviceInfo(this.getAttribute('data-userid'))"
                                             type="button">Device Info
                                     </button>
-                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                    <button style="margin: 0 3px;" class="  button-33" data-toggle="modal"
                                             th:attr="data-target='#other' ,data-userid=${user.id}"
                                             onclick="otherInfo(this.getAttribute('data-userid'))"
                                             type="button">Other Info
                                     </button>
+                                  
                                    <div th:if="${showButtom}">
-<button style="margin: 0 550px;" class="btn btn-info" data-toggle="modal"
+<button style="margin: 0 450px;" class="button-33  " data-toggle="modal"
                                             data-target='#createPlan' type="button">Add subscription
 </button></div>
                                 </div>
@@ -159,12 +187,14 @@
                 <div class="modal-body" style="background-color: white;">
                     <table id="activePlanTable" class="table">
                         <thead>
-                            <tr>
-                                <th>S.no</th>
+                            <tr style="color:#1B4F72;">
+                                <th  >S.no</th>
+                                <th>Plan Id</th>
                                 <th>Status</th>
                                 <th>Plan Name</th>
-                                <th>Start_From</th>
-                                <th>Valid_Till</th>
+                                <th>Start From</th>
+                                <th>Valid Till</th>
+                                <th th:if="${showButtom}">Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -185,14 +215,15 @@
                     </button>
                 </div>
                 <div class="modal-body" style="background-color: white;">
-                    <div style="font-weight: bold; color: green;">No of times App Launched: <span id="appLaunchCount" style="color: green;"></span></div>
+                    <div style="font-weight: bold; color:  #1ABC9C;">No of times App Launched: <span id="appLaunchCount" style="color:   #1ABC9C;"></span></div>
                     <table class="table" id="deviceTable">
                         <thead>
-                            <tr>
+                            <tr style="color:#1B4F72;">
                                 <th>Device</th>
                                 <th>Model</th>
                                 <th>Os</th>
                                 <th>Os_version</th>
+                                <th>IP Address</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -299,7 +330,7 @@
 </div>
                 <table class="table" id="otherTable">
                     <thead>
-                        <tr>
+                        <tr style="color:#1B4F72;">
                             <th>Content Id</th>
                             <th>Content Name</th>
                             <th>Type</th>
@@ -329,7 +360,8 @@
 </script>
 <script>
 
-async function subscriptionInfo(userId) {
+async function subscriptionInfo(userId,smcNo,mobile,showBtn) {
+	var s= smc;
     var url = '/api/user/subscription/'+userId+'/IN';
     var modal = document.getElementById('subscription'); // Get the modal element
 
@@ -346,7 +378,7 @@ async function subscriptionInfo(userId) {
 
         // Update the modal content with the retrieved data
         
-        updateModalContent(data);
+        updateModalContent(data,smcNo,mobile,showBtn);
         
         // Show the modal
         $(modal).modal('show');
@@ -355,12 +387,12 @@ async function subscriptionInfo(userId) {
     }
 }
 
-function updateModalContent(data) {
+function updateModalContent(data,smcNo,mobile,showBtn) {
     // Update Active Plan table
     console.log(data.results)
    
     var activePlanTable = document.getElementById('activePlanTable');
-    updateTable(activePlanTable, data);
+    updateTable(activePlanTable, data,smcNo,mobile,showBtn);
 
     // Update Expired Plan table
    // var expiredPlanTable = document.getElementById('expiredPlanTable');.results
@@ -368,13 +400,13 @@ function updateModalContent(data) {
    
 }
 
-function updateTable(table, planData) {
+function updateTable(table, planData,smcNo,mobile,showBtn) {
     // Clear existing rows
     var tbody = table.getElementsByTagName('tbody')[0];
     tbody.innerHTML = '';
 
     // Update the table with new data
-    if (planData.status === "SUCCESS" && planData.results.length > 0) {
+    if (planData.results.length > 0) {
         for (let index = planData.results.length - 1; index >= 0; index--) {
             let plan = planData.results[index];
             var row = tbody.insertRow();
@@ -388,8 +420,9 @@ function updateTable(table, planData) {
 
             var cell = row.insertCell(0);
             cell.textContent = planData.results.length - index;
-
-            cell = row.insertCell(1);
+            var cell = row.insertCell(1);
+            cell.textContent = plan.plan.planId;
+            cell = row.insertCell(2);
             var button = document.createElement("button");
             button.textContent = plan.status;
             if (plan.status === "Active") {
@@ -399,7 +432,7 @@ function updateTable(table, planData) {
             }
             cell.appendChild(button);
 
-            var cell = row.insertCell(2);
+            cell = row.insertCell(3);
             cell.textContent = plan.plan.name;
             cell.title = plan.plan.name;
             cell.style.display = "inline-block";
@@ -408,20 +441,106 @@ function updateTable(table, planData) {
             cell.style.textOverflow = "ellipsis";
             cell.style.whiteSpace = "nowrap";
 
-
-            cell = row.insertCell(3);
+            cell = row.insertCell(4);
             cell.textContent = from.toISOString().slice(0, 10); // Display date only
 
-            cell = row.insertCell(4);
+            cell = row.insertCell(5);
             cell.textContent = to.toISOString().slice(0, 10); // Display date only
+if(showBtn==="true"){
+            cell = row.insertCell(6);
+            var icon = document.createElement('i');
+            icon.classList.add('fa', 'fa-trash');
+            
+           
+            if (plan.status === "Expired") {
+            	//icon.style.cursor = "not-allowed";
+            	icon.style.pointerEvents = "none";
+            	icon.style.color = "grey";
+            }
+            	//icon.style.color = "grey";
+              //  icon.style.cursor = "not-allowed";
+               // icon.style.pointerEvents = "none";
+            // Change cursor to pointer to indicate it's clickable
+            icon.onclick = function() {
+            	$('#subscription').modal('hide');
+            	 jQuery.getScript('https://cdn.jsdelivr.net/npm/sweetalert2@11', function() {
+                Swal.fire({
+                    title: 'Do you want Continue ?',
+                    text: "Deactivate the subscription",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: 'green',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    	
+
+                    	// Create a JSON object to hold the data
+                    	var jsonData = {};
+
+                    	// Assign values to keys
+                    	jsonData.action = "delete";
+                    	jsonData.smc = smcNo;
+                    	jsonData.mobileNo = mobile;
+                    	jsonData.packageIds = plan.plan.planId;
+
+                    	// Send the JSON data using fetch
+                    	fetch('/api/v1/apiOrder', {
+                    	    method: 'POST',
+                    	    headers: {
+                    	        'Content-Type': 'application/json'
+                    	    },
+                    	    body: JSON.stringify(jsonData)
+                    	})
+                    	.then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        
+                        .then(data => {
+                        	if(data.code==200){
+                        	//$('#createPlan').modal('hide');
+                            // Handle success
+                            console.log('Success:', data);
+                            Swal.fire(
+                                    'Confirmed!',
+                                    'Deactivate the subscription',
+                                    'success'
+                                )
+                        	}else{
+                        		swal("Failed!", "something went wrong", "error");
+                        		
+                        	}
+                            // You can show a success message or perform any other action
+                        })
+                        .catch(error => {
+                        	//$('#createPlan').modal('hide');
+                        	 swal.fire("Failed!", "something went wrong", "error");
+                            // Handle errors
+                            console.error('Error:', error);
+                            // You can show an error message or perform any other action
+                        });
+                    } else {
+                        console.log('Clicked cancel');
+                    }
+                });
+            	    });
+            };
+            cell.appendChild(icon);
+}
+            
         }
     } else {
         var row = tbody.insertRow();
         var cell = row.insertCell(0);
-        cell.colSpan = "5";
+        cell.colSpan = "6"; // Colspan should match the number of columns in the table
         cell.innerHTML = "<b>No data is available</b>";
     }
 }
+
 
 
 
@@ -488,6 +607,8 @@ function updateDeviceTable(table, planData) {
         cell.textContent =plan.device.fields.os ;
         cell = row.insertCell(3);
         cell.textContent =plan.device.fields.os_version ;
+        cell = row.insertCell(4);
+        cell.textContent =plan.device.session_info[0].fields.ip_address ;
         } else {
             var cell = row.insertCell(0);
             cell.textContent =plan.message;
@@ -573,7 +694,8 @@ function updateOtherTable(table, planData) {
         cell = row.insertCell(6);
         cell.textContent =from.toISOString().slice(0, 30); ;
         cell = row.insertCell(7);
-        cell.textContent =to.toISOString().slice(0, 30); ;
+        cell.textContent =to.toISOString().slice(0, 30); 
+        
         } else {
             var cell = row.insertCell(0);
             cell.textContent =plan.message1;
@@ -658,27 +780,35 @@ function eventData1(){
     });
  
  document.addEventListener('DOMContentLoaded', function() {
-	  document.querySelector('[data-clear-input]').addEventListener('click', function() {
-	    document.querySelector('.clearable-input input[type="search"]').value = '';
-	  });
+	    document.querySelector('[data-clear-input]').addEventListener('click', function() {
+	    	var inputField = document.querySelector('.clearable-input input[type="search"]');
+	    	if (inputField) {
+	    	    inputField.value = '';
+	    	} else {
+	    	    console.error("Input field not found");
+	    	}
+
+	    });
 	});
+
+
 </script>
 
 
 <style>
 .green-button {
-    background-color: green;
+    background-color: #6495ED;
     color: white; /* Text color */
     border: none; /* Remove border */
     padding: 5px 10px; /* Adjust padding */
-    border-radius: 5px; /* Optional: Add rounded corners */
+    border-radius: 50px; /* Optional: Add rounded corners */
 }
 .red-button {
-    background-color: red;
+    background-color: #CD6155 ;
     color: white; /* Text color */
     border: none; /* Remove border */
     padding: 5px 10px; /* Adjust padding */
-    border-radius: 5px; /* Optional: Add rounded corners */
+    border-radius: 50px; /* Optional: Add rounded corners */
 }
 
 
