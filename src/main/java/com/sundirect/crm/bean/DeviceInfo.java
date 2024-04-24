@@ -1,6 +1,7 @@
 package com.sundirect.crm.bean;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,6 +10,11 @@ public class DeviceInfo {
     @JsonProperty("pk")
     private int id;
     private Fields fields;
+    @JsonProperty("session_info")
+    private List<SessionInfo> sessionInfo;
+    
+   
+    
     public static class Fields {
     	private String os;
     	private String os_version;
@@ -153,6 +159,14 @@ public class DeviceInfo {
 	public void setFields(Fields fields) {
 		this.fields = fields;
 	}
+	public List<SessionInfo> getSessionInfo() {
+		return sessionInfo;
+	}
+	public void setSessionInfo(List<SessionInfo> sessionInfo) {
+		this.sessionInfo = sessionInfo;
+	}
+	
+	
     
     
 

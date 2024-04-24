@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,9 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sundirect.crm.bean.OrderCreation;
 import com.sundirect.crm.bean.OrderCreationAPI;
 import com.sundirect.crm.bean.Plan;
+import com.sundirect.crm.bean.Results;
 import com.sundirect.crm.bean.SDPlan;
 import com.sundirect.crm.bean.UserInfo;
 import com.sundirect.crm.bean.UserSignUp;
@@ -37,7 +42,7 @@ public class APIController {
 	private static final Logger log = LoggerFactory.getLogger(APIController.class);
 	@Autowired
 	APIService apiservice;
-	
+
 	@Autowired
 	AppUserService appUserService;
 
@@ -136,23 +141,82 @@ public class APIController {
 			String returnVal = apiservice.getAllSubscription(userId, country);
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode jsonNode = objectMapper.readTree(returnVal);
-			log.info("json string: {}", jsonNode.toString());
-			return jsonNode;
+			String result = jsonNode.get("results").toString();
+			List<Results> subList = new ArrayList<Results>();
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				subList = mapper.readValue(result, new TypeReference<List<Results>>() {
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String sdPlan = apiservice.getAllSDPlan();
+			JSONObject jsonObj = new JSONObject(sdPlan);
+			String responseFinal = jsonObj.getString("results");
+			List<SDPlan> planList = new ArrayList<SDPlan>();
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				planList = mapper.readValue(responseFinal, new TypeReference<List<SDPlan>>() {
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			List<Results> subListEdited = new ArrayList<Results>();
+			for (Results re : subList) {
+				boolean foundMatchingPlan = false;
+				Results editedResults = new Results();
+				for (SDPlan plan : planList) {
+					if (re.getPlan().getPlanId() == plan.getFields().getSmsPlanId()) {
+						foundMatchingPlan = true;
+						re.getPlan().setPlanId(plan.getFields().getSdPlanId());
+						editedResults = re;
+						subListEdited.add(editedResults);
+						break;
+					}
+				}
+				if (!foundMatchingPlan) {
+					subListEdited.add(re);
+				}
+			}
 
+			for (Results resultC : subListEdited) {
+				if (resultC.getPlan().getName().equals("TeluguHDPack4")) {
+					log.info("check plan ID: {}", resultC.getPlan().getPlanId());
+				}
+			}
+			ObjectMapper objectMapper1 = new ObjectMapper();
+			ArrayNode arrayNode = objectMapper1.valueToTree(subListEdited);
+			JsonNode jsonNode1 = (JsonNode) arrayNode;
+			log.info("final string: {}", jsonNode1);
+			String jsonString = objectMapper.writeValueAsString(jsonNode1);
+			String updatedJsonString = "";
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (authentication != null && authentication.getAuthorities().stream()
+					.anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+				updatedJsonString = "{" + "\"results\"" + ":" + jsonString + "," + "\"showButtom\"" + ":" + true + "}";
+				log.info("checking show button1: {}", updatedJsonString);
+				// ((ObjectNode) jsonNode1).put("showButtom",true);
+			} else {
+				updatedJsonString = "{" + "\"results\"" + ":" + jsonString + "," + "\"showButtom\"" + ":" + false + "}";
+				log.info("checking show button2: {}", updatedJsonString);
+				// ((ObjectNode) jsonNode1).put("showButtom", false);
+			}
+			JsonNode finalJsonNode = objectMapper.readTree(updatedJsonString);
+
+			return finalJsonNode;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("Exception occur: {}", e.getMessage());
 			return null;
 		}
 	}
-	
-	
-	@PostMapping(value="/api/sms/signup", consumes = "application/json")
-	public String signUp(@RequestBody UserSignUp user) {		
-		
-		String resp=appUserService.userSignUp(user);
-				
-		return resp;		
+
+	@PostMapping(value = "/api/sms/signup", consumes = "application/json")
+	public String signUp(@RequestBody UserSignUp user) {
+
+		String resp = appUserService.userSignUp(user);
+
+		return resp;
 	}
 
 }

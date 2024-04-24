@@ -467,11 +467,9 @@ public class SMSController {
 		return "redirect:/";
 	}
 	
-	@PostMapping(value="/sms/signup", consumes = "application/json")
+	@PostMapping(value="/api/signup", consumes = "application/json")
 	public String signUp(@RequestBody UserSignUp user) {		
-		
-		String resp=appUserService.userSignUp(user);
-				
+		String resp=appUserService.userSignUp(user);				
 		return resp;		
 	}
 }

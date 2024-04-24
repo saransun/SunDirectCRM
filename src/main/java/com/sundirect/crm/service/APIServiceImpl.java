@@ -277,22 +277,22 @@ public class APIServiceImpl implements APIService{
 			connection.connect();
 			StringBuilder sb = new StringBuilder();
 			int responseCode = connection.getResponseCode();
-			log.info("responsecode " + responseCode);
+		//	log.info("responsecode " + responseCode);
 			log.info("content-type " + connection.getContentType());
 
 			if (responseCode == HttpURLConnection.HTTP_OK) {
-				log.info("inside httok");
+				log.info("inside http ok");
 				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 				String line = null;
 				while ((line = br.readLine()) != null) {
 					sb.append(line + "\n");
 				}
 				br.close();
-				log.info("response" + sb.toString());
+				//log.info("response" + sb.toString());
 				resp = sb.toString();
 				return resp;
 			} else {
-				log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+				//log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
 				resp = connection.getResponseMessage();
 				return resp;
 			}
